@@ -1,0 +1,847 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Chess Online</title>
+  <script src="https://unpkg.com/react@18/umd/react.production.min.js" crossorigin></script>
+  <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js" crossorigin></script>
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+  <style>
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    body{background:#161512;font-family:'Segoe UI',system-ui,sans-serif;overflow-x:hidden;min-height:100vh}
+    ::-webkit-scrollbar{width:5px}
+    ::-webkit-scrollbar-track{background:transparent}
+    ::-webkit-scrollbar-thumb{background:#3a3734;border-radius:3px}
+    @keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}
+    @keyframes fadeIn{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
+    @keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.4;transform:scale(.85)}}
+    @keyframes shimmer{0%{background-position:-200% center}100%{background-position:200% center}}
+    @keyframes spin{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}
+    .btn{cursor:pointer;transition:all .2s;font-family:inherit;border:none;outline:none}
+    .btn:hover{transform:translateY(-1px);filter:brightness(1.1)}
+    .btn:active{transform:translateY(0)}
+    input{font-family:inherit}
+    input::placeholder{color:#555}
+    input:focus{outline:none}
+  </style>
+</head>
+<body>
+<div id="root"></div>
+<script type="text/babel">
+const {useState,useEffect,useRef,useCallback}=React;
+
+// ════════════════════════════════════════════
+// UTILS
+// ════════════════════════════════════════════
+const CHARS='ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+const genId=n=>Array.from({length:n},()=>CHARS[Math.random()*CHARS.length|0]).join('');
+const FILES=['a','b','c','d','e','f','g','h'];
+const SYM={wK:'♔',wQ:'♕',wR:'♖',wB:'♗',wN:'♘',wP:'♙',bK:'♚',bQ:'♛',bR:'♜',bB:'♝',bN:'♞',bP:'♟'};
+const LIGHT='#f0d9b5',DARK='#b58863',HI='rgba(205,210,56,0.55)',SEL_C='rgba(20,85,30,0.5)',CHK='rgba(220,30,30,0.55)';
+const INIT_TIME=600000;
+const fmtTime=ms=>{const s=Math.max(0,Math.ceil(ms/1000));return`${Math.floor(s/60)}:${(s%60).toString().padStart(2,'0')}`};
+const pCol=p=>p?p[0]:null;
+const pType=p=>p?p[1]:null;
+const inB=(r,c)=>r>=0&&r<8&&c>=0&&c<8;
+
+// ════════════════════════════════════════════
+// STORAGE - localStorage + cross-tab sync
+// ════════════════════════════════════════════
+const Store={
+  key(rid){return'chess_'+rid},
+  save(rid,state){
+    try{
+      localStorage.setItem(this.key(rid),JSON.stringify(state));
+      localStorage.setItem('chess_sig',rid+'|'+Date.now());
+    }catch(e){console.warn('save err',e)}
+  },
+  load(rid){
+    try{const d=localStorage.getItem(this.key(rid));return d?JSON.parse(d):null}catch{return null}
+  },
+  saveTok(rid,tok){try{sessionStorage.setItem('ctok_'+rid,tok)}catch{}},
+  loadTok(rid){try{return sessionStorage.getItem('ctok_'+rid)||null}catch{return null}}
+};
+
+// ════════════════════════════════════════════
+// CHESS ENGINE
+// ════════════════════════════════════════════
+const initBoard=()=>[
+  ['bR','bN','bB','bQ','bK','bB','bN','bR'],
+  ['bP','bP','bP','bP','bP','bP','bP','bP'],
+  [null,null,null,null,null,null,null,null],
+  [null,null,null,null,null,null,null,null],
+  [null,null,null,null,null,null,null,null],
+  [null,null,null,null,null,null,null,null],
+  ['wP','wP','wP','wP','wP','wP','wP','wP'],
+  ['wR','wN','wB','wQ','wK','wB','wN','wR'],
+];
+const cloneB=b=>b.map(r=>[...r]);
+
+function isAttacked(b,row,col,by){
+  for(let r=0;r<8;r++)for(let c=0;c<8;c++){
+    const p=b[r][c];if(!p||pCol(p)!==by)continue;
+    const t=pType(p);
+    if(t==='P'){const d=by==='w'?-1:1;if(r+d===row&&Math.abs(c-col)===1)return true}
+    if(t==='N'){const dr=Math.abs(r-row),dc=Math.abs(c-col);if((dr===2&&dc===1)||(dr===1&&dc===2))return true}
+    if(t==='K'&&Math.abs(r-row)<=1&&Math.abs(c-col)<=1&&(r!==row||c!==col))return true;
+    if(t==='R'||t==='Q'){
+      if(r===row||c===col){let ok=true;
+        if(r===row){const s=Math.sign(col-c);for(let x=c+s;x!==col;x+=s)if(b[r][x]){ok=false;break}}
+        else{const s=Math.sign(row-r);for(let x=r+s;x!==row;x+=s)if(b[x][c]){ok=false;break}}
+        if(ok)return true}
+    }
+    if(t==='B'||t==='Q'){
+      if(Math.abs(r-row)===Math.abs(c-col)&&r!==row){
+        const sr=Math.sign(row-r),sc=Math.sign(col-c);let ok=true,cr=r+sr,cc=c+sc;
+        while(cr!==row){if(b[cr][cc]){ok=false;break}cr+=sr;cc+=sc}
+        if(ok)return true}
+    }
+  }
+  return false;
+}
+
+function findKing(b,color){for(let r=0;r<8;r++)for(let c=0;c<8;c++)if(b[r][c]===color+'K')return[r,c];return null}
+function inCheck(b,color){const k=findKing(b,color);return k?isAttacked(b,k[0],k[1],color==='w'?'b':'w'):false}
+
+function getEP(hist){
+  if(!hist||!hist.length)return null;
+  const l=hist[hist.length-1];
+  if(l.piece[1]==='P'&&Math.abs(l.from[0]-l.to[0])===2)return[(l.from[0]+l.to[0])/2,l.to[1]];
+  return null;
+}
+
+function getMoves(b,r,c,ep,cast){
+  const p=b[r][c];if(!p)return[];
+  const col=pCol(p),t=pType(p),opp=col==='w'?'b':'w',mv=[];
+  const cs=cast||{wK:true,wQ:true,bK:true,bQ:true};
+  if(t==='P'){
+    const d=col==='w'?-1:1,st=col==='w'?6:1;
+    if(inB(r+d,c)&&!b[r+d][c]){mv.push([r+d,c]);if(r===st&&!b[r+2*d][c])mv.push([r+2*d,c])}
+    for(const dc of[-1,1]){const nr=r+d,nc=c+dc;if(!inB(nr,nc))continue;
+      if(b[nr][nc]&&pCol(b[nr][nc])===opp)mv.push([nr,nc]);
+      if(ep&&ep[0]===nr&&ep[1]===nc)mv.push([nr,nc])}
+  }else if(t==='N'){
+    for(const[dr,dc]of[[-2,-1],[-2,1],[-1,-2],[-1,2],[1,-2],[1,2],[2,-1],[2,1]]){
+      const nr=r+dr,nc=c+dc;if(inB(nr,nc)&&pCol(b[nr][nc])!==col)mv.push([nr,nc])}
+  }else if(t==='K'){
+    for(let dr=-1;dr<=1;dr++)for(let dc=-1;dc<=1;dc++){if(!dr&&!dc)continue;
+      const nr=r+dr,nc=c+dc;if(inB(nr,nc)&&pCol(b[nr][nc])!==col)mv.push([nr,nc])}
+    if(!inCheck(b,col)){
+      if(cs[col+'K']&&b[r][7]===col+'R'&&!b[r][5]&&!b[r][6]&&!isAttacked(b,r,5,opp)&&!isAttacked(b,r,6,opp))mv.push([r,6]);
+      if(cs[col+'Q']&&b[r][0]===col+'R'&&!b[r][1]&&!b[r][2]&&!b[r][3]&&!isAttacked(b,r,2,opp)&&!isAttacked(b,r,3,opp))mv.push([r,2]);
+    }
+  }else{
+    const dirs=[];
+    if(t==='R'||t==='Q')dirs.push([0,1],[0,-1],[1,0],[-1,0]);
+    if(t==='B'||t==='Q')dirs.push([1,1],[1,-1],[-1,1],[-1,-1]);
+    for(const[dr,dc]of dirs){let nr=r+dr,nc=c+dc;
+      while(inB(nr,nc)){if(b[nr][nc]){if(pCol(b[nr][nc])!==col)mv.push([nr,nc]);break}mv.push([nr,nc]);nr+=dr;nc+=dc}}
+  }
+  return mv.filter(([nr,nc])=>{
+    const nb=cloneB(b);
+    if(t==='K'&&Math.abs(nc-c)===2){nb[r][c]=null;nb[nr][nc]=p;
+      if(nc===6){nb[r][5]=nb[r][7];nb[r][7]=null}else{nb[r][3]=nb[r][0];nb[r][0]=null}
+    }else{if(t==='P'&&ep&&nr===ep[0]&&nc===ep[1])nb[r][nc]=null;nb[nr][nc]=p;nb[r][c]=null}
+    return!inCheck(nb,col);
+  });
+}
+
+function hasLegal(b,col,ep,cs){
+  for(let r=0;r<8;r++)for(let c=0;c<8;c++)if(b[r][c]&&pCol(b[r][c])===col&&getMoves(b,r,c,ep,cs).length)return true;
+  return false;
+}
+
+function execMove(board,hist,fr,fc,tr,tc,promo,cast){
+  const p=board[fr][fc],col=pCol(p),t=pType(p),ep=getEP(hist);
+  let cap=board[tr][tc];const nb=cloneB(board);
+  if(t==='P'&&ep&&tr===ep[0]&&tc===ep[1]){cap=board[fr][tc];nb[fr][tc]=null}
+  if(t==='K'&&Math.abs(tc-fc)===2){nb[fr][fc]=null;nb[tr][tc]=p;
+    if(tc===6){nb[fr][5]=nb[fr][7];nb[fr][7]=null}else{nb[fr][3]=nb[fr][0];nb[fr][0]=null}
+  }else{nb[tr][tc]=promo?(col+promo):p;nb[fr][fc]=null}
+  let san;
+  if(t==='K'&&Math.abs(tc-fc)===2)san=tc>fc?'O-O':'O-O-O';
+  else if(t==='P')san=(cap?FILES[fc]+'x':'')+FILES[tc]+(8-tr)+(promo?'='+promo:'');
+  else san=t+(cap?'x':'')+FILES[tc]+(8-tr);
+  const nc={...cast};
+  if(p==='wK'){nc.wK=false;nc.wQ=false}if(p==='bK'){nc.bK=false;nc.bQ=false}
+  if(fr===7&&fc===7)nc.wK=false;if(fr===7&&fc===0)nc.wQ=false;
+  if(fr===0&&fc===7)nc.bK=false;if(fr===0&&fc===0)nc.bQ=false;
+  if(tr===7&&tc===7)nc.wK=false;if(tr===7&&tc===0)nc.wQ=false;
+  if(tr===0&&tc===7)nc.bK=false;if(tr===0&&tc===0)nc.bQ=false;
+  const move={piece:p,from:[fr,fc],to:[tr,tc],captured:cap,san,mover:col};
+  const nh=[...hist,move];const nt=col==='w'?'b':'w';const nep=getEP(nh);
+  let status='playing',result=null,reason=null;
+  if(inCheck(nb,nt)){if(!hasLegal(nb,nt,nep,nc)){status='finished';result=col==='w'?'white':'black';reason='checkmate';move.san+='#'}else move.san+='+'}
+  else if(!hasLegal(nb,nt,nep,nc)){status='finished';result='draw';reason='stalemate'}
+  return{board:nb,history:nh,move,castling:nc,status,result,reason,nextTurn:nt};
+}
+
+function newGameState(whiteTok){
+  return{white:whiteTok,black:null,board:initBoard(),turn:'w',history:[],captW:[],captB:[],
+    status:'waiting',result:null,reason:null,castling:{wK:true,wQ:true,bK:true,bQ:true},
+    wTime:INIT_TIME,bTime:INIT_TIME,lastMoveAt:null,lastMove:null,created:Date.now()};
+}
+
+// ════════════════════════════════════════════
+// TIMER HOOK
+// ════════════════════════════════════════════
+function useTimer(gs){
+  const[times,setTimes]=useState({w:INIT_TIME,b:INIT_TIME});
+  useEffect(()=>{
+    if(!gs)return;
+    const calc=()=>{
+      if(gs.status!=='playing'||!gs.lastMoveAt)return{w:gs.wTime,b:gs.bTime};
+      const el=Date.now()-gs.lastMoveAt;
+      return{w:gs.turn==='w'?Math.max(0,gs.wTime-el):gs.wTime,b:gs.turn==='b'?Math.max(0,gs.bTime-el):gs.bTime};
+    };
+    setTimes(calc());
+    if(gs.status!=='playing')return;
+    const iv=setInterval(()=>setTimes(calc()),250);
+    return()=>clearInterval(iv);
+  },[gs?.turn,gs?.lastMoveAt,gs?.wTime,gs?.bTime,gs?.status]);
+  return times;
+}
+
+// ════════════════════════════════════════════
+// COMPONENTS
+// ════════════════════════════════════════════
+
+function PlayerBar({color,captured,timeMs,active,label,result}){
+  const syms=(captured||[]).map(p=>SYM[p]).join('');
+  const low=timeMs<30000&&active;
+  return(
+    <div style={{display:'flex',alignItems:'center',gap:10,padding:'8px 12px',
+      background:active?'#312e2b':'#1e1c19',borderRadius:8,transition:'background .3s',
+      border:`1px solid ${active?'#4a4540':'#2a2826'}`}}>
+      <div style={{width:38,height:38,borderRadius:'50%',
+        background:color==='w'?'linear-gradient(135deg,#f5f0e8,#d4b483)':'linear-gradient(135deg,#3a3632,#1a1816)',
+        border:`2px solid ${color==='w'?'#c8a96a':'#4a4540'}`,
+        display:'flex',alignItems:'center',justifyContent:'center',fontSize:20,flexShrink:0,
+        boxShadow:'0 2px 8px rgba(0,0,0,0.4)'}}>
+        {color==='w'?'♔':'♚'}
+      </div>
+      <div style={{flex:1,minWidth:0}}>
+        <div style={{color:'#e8e6e3',fontWeight:600,fontSize:14}}>{label}</div>
+        <div style={{fontSize:13,color:'#666',minHeight:16,overflow:'hidden',textOverflow:'ellipsis',
+          whiteSpace:'nowrap',letterSpacing:1}}>{syms||<span style={{color:'#444'}}>—</span>}</div>
+      </div>
+      {result?(
+        <div style={{fontSize:13,fontWeight:700,padding:'4px 12px',borderRadius:6,
+          background:result==='win'?'rgba(129,182,76,0.15)':result==='draw'?'rgba(240,192,64,0.15)':'rgba(232,98,74,0.15)',
+          color:result==='win'?'#81b64c':result==='draw'?'#f0c040':'#e8624a',
+          border:`1px solid ${result==='win'?'rgba(129,182,76,0.3)':result==='draw'?'rgba(240,192,64,0.3)':'rgba(232,98,74,0.3)'}`}}>
+          {result==='win'?'Won':result==='draw'?'Draw':'Lost'}
+        </div>
+      ):(
+        <div style={{background:'#141210',border:`2px solid ${active?low?'#ff5f5f':'#81b64c':'#2a2826'}`,
+          borderRadius:6,padding:'5px 12px',fontSize:17,fontWeight:700,
+          color:low?'#ff5f5f':active?'#fff':'#888',minWidth:65,textAlign:'center',
+          fontVariantNumeric:'tabular-nums',transition:'all .3s',fontFamily:'monospace',
+          boxShadow:active?`0 0 12px ${low?'rgba(255,95,95,0.2)':'rgba(129,182,76,0.15)'}`:'none'}}>
+          {fmtTime(timeMs)}
+        </div>
+      )}
+    </div>
+  );
+}
+
+function MoveList({history}){
+  const ref=useRef(null);
+  useEffect(()=>{if(ref.current)ref.current.scrollTop=ref.current.scrollHeight},[history]);
+  const pairs=[];for(let i=0;i<history.length;i+=2)pairs.push([history[i],history[i+1]]);
+  return(
+    <div ref={ref} style={{flex:1,overflowY:'auto',padding:'6px 0'}}>
+      {!pairs.length&&<div style={{color:'#444',textAlign:'center',padding:28,fontSize:13,fontStyle:'italic'}}>Moves appear here</div>}
+      {pairs.map(([w,b],i)=>(
+        <div key={i} style={{display:'flex',alignItems:'center',padding:'1px 0',
+          background:i%2?'rgba(255,255,255,0.02)':'transparent',borderRadius:3}}>
+          <span style={{color:'#555',fontSize:12,width:30,textAlign:'right',paddingRight:6,
+            flexShrink:0,fontVariantNumeric:'tabular-nums'}}>{i+1}.</span>
+          <span style={{flex:1,padding:'5px 8px',color:'#c8c4bf',fontSize:13}}>{w?.san||''}</span>
+          <span style={{flex:1,padding:'5px 8px',color:'#c8c4bf',fontSize:13}}>{b?.san||''}</span>
+        </div>
+      ))}
+    </div>
+  );
+}
+
+function PromoDialog({color,onChoose}){
+  return(
+    <div style={{position:'absolute',inset:0,background:'rgba(0,0,0,0.9)',display:'flex',
+      alignItems:'center',justifyContent:'center',zIndex:20,borderRadius:6}}>
+      <div style={{background:'#1e1c19',border:'1px solid #4a4540',borderRadius:14,
+        padding:'28px 32px',textAlign:'center',boxShadow:'0 24px 60px rgba(0,0,0,0.8)'}}>
+        <div style={{color:'#e8e6e3',marginBottom:18,fontWeight:600,fontSize:15}}>Choose Promotion</div>
+        <div style={{display:'flex',gap:10}}>
+          {['Q','R','B','N'].map(pc=>(
+            <button key={pc} className="btn" onClick={()=>onChoose(pc)}
+              style={{width:66,height:66,background:'#2a2826',border:'2px solid #4a4540',borderRadius:10,
+                fontSize:36,display:'flex',alignItems:'center',justifyContent:'center',
+                color:color==='w'?'#fff':'#1a1a1a',
+                WebkitTextStroke:color==='w'?'1px #555':'1px rgba(255,255,255,0.1)',
+                filter:'drop-shadow(0 2px 4px rgba(0,0,0,0.5))'}}>
+              {SYM[color+pc]}
+            </button>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function GameOverBanner({result,reason,myColor,onNewGame}){
+  const isW=result===myColor,isD=result==='draw';
+  return(
+    <div style={{position:'absolute',top:'50%',left:'50%',transform:'translate(-50%,-50%)',
+      background:'linear-gradient(160deg,#1e1c19,#161410)',
+      border:`1px solid ${isW?'#81b64c':isD?'#f0c040':'#e8624a'}`,
+      borderRadius:16,padding:'32px 40px',textAlign:'center',zIndex:30,
+      boxShadow:'0 24px 80px rgba(0,0,0,0.9)',minWidth:260}}>
+      <div style={{fontSize:44,marginBottom:12}}>{isW?'🏆':isD?'🤝':'😔'}</div>
+      <div style={{color:'#e8e6e3',fontSize:26,fontWeight:700,marginBottom:8}}>
+        {isD?'Draw!':isW?'You Won!':'You Lost'}
+      </div>
+      <div style={{color:'#666',fontSize:14,marginBottom:28,fontStyle:'italic'}}>
+        {reason==='checkmate'?'By checkmate':reason==='stalemate'?'Stalemate':reason==='timeout'?'On time':reason==='resign'?'By resignation':'Game over'}
+      </div>
+      <button className="btn" onClick={onNewGame}
+        style={{background:'linear-gradient(135deg,#81b64c,#6a9a3a)',borderRadius:10,
+          padding:'12px 32px',color:'#fff',fontSize:15,fontWeight:700,
+          boxShadow:'0 4px 16px rgba(129,182,76,0.35)'}}>
+        New Game
+      </button>
+    </div>
+  );
+}
+
+function ChessBoard({board,myColor,selected,legalMvs,lastMove,isMyTurn,checkSq,onClick}){
+  const SQ=typeof window!=='undefined'&&window.innerWidth<500?Math.floor((window.innerWidth-80)/8):62;
+  const rows=myColor==='b'?[7,6,5,4,3,2,1,0]:[0,1,2,3,4,5,6,7];
+  const cols=myColor==='b'?[7,6,5,4,3,2,1,0]:[0,1,2,3,4,5,6,7];
+  return(
+    <div style={{position:'relative',userSelect:'none'}}>
+      <div style={{position:'absolute',left:-20,top:0,height:SQ*8,display:'flex',flexDirection:'column'}}>
+        {rows.map(r=><div key={r} style={{height:SQ,display:'flex',alignItems:'center',justifyContent:'center',
+          color:'#777',fontSize:11,width:20}}>{8-r}</div>)}
+      </div>
+      <div style={{display:'grid',gridTemplateColumns:`repeat(8,${SQ}px)`,gridTemplateRows:`repeat(8,${SQ}px)`,
+        borderRadius:4,overflow:'hidden',boxShadow:'0 12px 50px rgba(0,0,0,0.7)',border:'2px solid #3a3430'}}>
+        {rows.map(r=>cols.map(f=>{
+          const isL=(r+f)%2===0,piece=board[r][f];
+          const isSel=selected&&selected[0]===r&&selected[1]===f;
+          const isLeg=legalMvs.some(([lr,lf])=>lr===r&&lf===f);
+          const isFrom=lastMove&&lastMove.from[0]===r&&lastMove.from[1]===f;
+          const isTo=lastMove&&lastMove.to[0]===r&&lastMove.to[1]===f;
+          const isCk=checkSq&&checkSq[0]===r&&checkSq[1]===f;
+          const canAct=piece&&pCol(piece)===myColor&&isMyTurn;
+          return(
+            <div key={`${r}-${f}`} onClick={()=>onClick(r,f)}
+              style={{width:SQ,height:SQ,background:isL?LIGHT:DARK,
+                cursor:canAct||isLeg?'pointer':'default',position:'relative',
+                display:'flex',alignItems:'center',justifyContent:'center'}}>
+              {isCk&&<div style={{position:'absolute',inset:0,background:CHK}}/>}
+              {(isFrom||isTo)&&<div style={{position:'absolute',inset:0,background:HI}}/>}
+              {isSel&&<div style={{position:'absolute',inset:0,background:SEL_C}}/>}
+              {isLeg&&!piece&&<div style={{position:'absolute',width:SQ*.34,height:SQ*.34,borderRadius:'50%',
+                background:'rgba(0,0,0,0.22)',top:'50%',left:'50%',transform:'translate(-50%,-50%)',zIndex:2}}/>}
+              {isLeg&&piece&&<div style={{position:'absolute',inset:3,borderRadius:'50%',
+                border:'3px solid rgba(0,0,0,0.25)',zIndex:2}}/>}
+              {piece&&<span style={{fontSize:SQ*.7,lineHeight:1,zIndex:3,position:'relative',
+                color:pCol(piece)==='w'?'#fff':'#1a1a1a',
+                WebkitTextStroke:pCol(piece)==='w'?'1px #666':'1px rgba(255,255,255,0.08)',
+                filter:'drop-shadow(0 1px 3px rgba(0,0,0,0.5))',pointerEvents:'none'}}>{SYM[piece]}</span>}
+            </div>
+          );
+        }))}
+      </div>
+      <div style={{display:'flex',marginTop:4}}>
+        {cols.map(f=><div key={f} style={{width:SQ,textAlign:'center',color:'#777',fontSize:11}}>{FILES[f]}</div>)}
+      </div>
+    </div>
+  );
+}
+
+// ════════════════════════════════════════════
+// MAIN APP
+// ════════════════════════════════════════════
+function App(){
+  const[screen,setScreen]=useState('home'); // home | waiting | game
+  const[roomId,setRoomId]=useState('');
+  const[joinCode,setJoinCode]=useState('');
+  const[myToken,setMyToken]=useState('');
+  const[myColor,setMyColor]=useState(null);
+  const[gs,setGs]=useState(null);
+  const[selected,setSelected]=useState(null);
+  const[legalMvs,setLegalMvs]=useState([]);
+  const[promoInfo,setPromoInfo]=useState(null);
+  const[error,setError]=useState('');
+  const[copied,setCopied]=useState(false);
+  const[connStatus,setConnStatus]=useState('connected');
+
+  const pollRef=useRef(null);
+  const gsRef=useRef(null);
+  const myColorRef=useRef(null);
+  const myTokenRef=useRef(null);
+  const roomIdRef=useRef(null);
+  const screenRef=useRef('home');
+  const lastPollRef=useRef(Date.now());
+
+  useEffect(()=>{gsRef.current=gs},[gs]);
+  useEffect(()=>{myColorRef.current=myColor},[myColor]);
+  useEffect(()=>{myTokenRef.current=myToken},[myToken]);
+  useEffect(()=>{roomIdRef.current=roomId},[roomId]);
+  useEffect(()=>{screenRef.current=screen},[screen]);
+  useEffect(()=>()=>clearInterval(pollRef.current),[]);
+
+  const times=useTimer(gs);
+
+  // Timeout detection
+  useEffect(()=>{
+    if(!gs||gs.status!=='playing')return;
+    const rid=roomIdRef.current;
+    if(times.w<=0&&gs.result===null){
+      const u={...gs,status:'finished',result:'black',reason:'timeout'};
+      Store.save(rid,u);setGs(u);
+    }
+    if(times.b<=0&&gs.result===null){
+      const u={...gs,status:'finished',result:'white',reason:'timeout'};
+      Store.save(rid,u);setGs(u);
+    }
+  },[times.w<=0,times.b<=0]);
+
+  // Cross-tab sync
+  useEffect(()=>{
+    const handler=e=>{
+      const rid=roomIdRef.current;if(!rid)return;
+      if(e.key==='chess_'+rid||e.key==='chess_sig'){
+        const s=Store.load(rid);
+        if(s)syncState(s);
+      }
+    };
+    window.addEventListener('storage',handler);
+    return()=>window.removeEventListener('storage',handler);
+  },[]);
+
+  // Visibility reconnect
+  useEffect(()=>{
+    const handler=()=>{
+      if(!document.hidden&&roomIdRef.current){
+        const s=Store.load(roomIdRef.current);
+        if(s)syncState(s);
+        setConnStatus('connected');
+        lastPollRef.current=Date.now();
+      }
+    };
+    document.addEventListener('visibilitychange',handler);
+    return()=>document.removeEventListener('visibilitychange',handler);
+  },[]);
+
+  function syncState(s){
+    const prev=gsRef.current;if(!prev)return;
+    if(prev.history?.length!==s.history?.length||prev.status!==s.status||prev.black!==s.black){
+      setGs(s);
+      if(s.status==='playing'&&screenRef.current==='waiting')setScreen('game');
+      if(prev.turn!==s.turn){setSelected(null);setLegalMvs([])}
+    }
+  }
+
+  function startPolling(rid){
+    clearInterval(pollRef.current);
+    pollRef.current=setInterval(()=>{
+      const now=Date.now();
+      const s=Store.load(rid);
+      if(s)syncState(s);
+      lastPollRef.current=now;
+      // Connection health check
+      if(now-lastPollRef.current>5000)setConnStatus('reconnecting');
+      else setConnStatus('connected');
+    },600);
+  }
+
+  // ── CREATE ROOM ──
+  function createRoom(){
+    setError('');
+    const rid=genId(6);
+    const tok=genId(16);
+    Store.saveTok(rid,tok);
+    const state=newGameState(tok);
+    Store.save(rid,state);
+    setMyToken(tok);setMyColor('w');setRoomId(rid);setGs(state);
+    setScreen('waiting');
+    startPolling(rid);
+  }
+
+  // ── JOIN ROOM ──
+  function joinRoom(){
+    setError('');
+    const code=joinCode.trim().toUpperCase();
+    if(!code||code.length<4){setError('Please enter a valid room code');return}
+
+    const state=Store.load(code);
+    if(!state){setError('Room not found! Ask your friend to create a game first.');return}
+    if(state.status==='finished'){setError('This game has already ended. Create a new one!');return}
+    if(state.black!==null){
+      // Maybe reconnect?
+      const savedTok=Store.loadTok(code);
+      if(savedTok&&(state.white===savedTok||state.black===savedTok)){
+        const col=state.white===savedTok?'w':'b';
+        setMyToken(savedTok);setMyColor(col);setRoomId(code);setGs(state);
+        setScreen(state.status==='playing'?'game':'waiting');
+        startPolling(code);
+        return;
+      }
+      setError('Room is full! Both players are already connected.');return;
+    }
+
+    const tok=genId(16);
+    Store.saveTok(code,tok);
+    const updated={...state,black:tok,status:'playing',lastMoveAt:Date.now()};
+    Store.save(code,updated);
+    setMyToken(tok);setMyColor('b');setRoomId(code);setGs(updated);
+    setScreen('game');
+    startPolling(code);
+  }
+
+  // ── SQUARE CLICK ──
+  function handleClick(r,f){
+    const g=gsRef.current;if(!g||g.status!=='playing')return;
+    const mc=myColorRef.current;if(g.turn!==mc)return;
+    if(g[mc==='w'?'white':'black']!==myTokenRef.current)return;
+
+    const piece=g.board[r][f];
+    if(selected){
+      const[sr,sf]=selected;
+      const legal=legalMvs.some(([lr,lf])=>lr===r&&lf===f);
+      if(legal){
+        const mp=g.board[sr][sf];
+        if(mp[1]==='P'&&(r===0||r===7)){setPromoInfo({fr:sr,ff:sf,tr:r,tf:f});return}
+        doExecMove(sr,sf,r,f,null);return;
+      }
+      if(piece&&pCol(piece)===mc){
+        const ep=getEP(g.history);setSelected([r,f]);setLegalMvs(getMoves(g.board,r,f,ep,g.castling));return;
+      }
+      setSelected(null);setLegalMvs([]);return;
+    }
+    if(piece&&pCol(piece)===mc){
+      const ep=getEP(g.history);setSelected([r,f]);setLegalMvs(getMoves(g.board,r,f,ep,g.castling));
+    }
+  }
+
+  function doExecMove(fr,ff,tr,tf,promo){
+    const rid=roomIdRef.current;
+    const state=Store.load(rid);
+    if(!state||state.status!=='playing')return;
+    const mc=myColorRef.current;
+    if(state.turn!==mc||state[mc==='w'?'white':'black']!==myTokenRef.current)return;
+    const ep=getEP(state.history);
+    if(!getMoves(state.board,fr,ff,ep,state.castling).some(([r,f])=>r===tr&&f===tf))return;
+
+    const res=execMove(state.board,state.history,fr,ff,tr,tf,promo,state.castling);
+    const now=Date.now();
+    const elapsed=state.lastMoveAt?(now-state.lastMoveAt):0;
+
+    let cW=[...state.captW],cB=[...state.captB];
+    if(res.move.captured){if(pCol(res.move.captured)==='b')cW.push(res.move.captured);else cB.push(res.move.captured)}
+
+    const updated={...state,board:res.board,history:res.history,turn:res.nextTurn,
+      lastMove:{from:[fr,ff],to:[tr,tf]},captW:cW,captB:cB,
+      status:res.status,result:res.result,reason:res.reason,castling:res.castling,
+      wTime:mc==='w'?Math.max(0,state.wTime-elapsed):state.wTime,
+      bTime:mc==='b'?Math.max(0,state.bTime-elapsed):state.bTime,
+      lastMoveAt:now};
+
+    Store.save(rid,updated);setGs(updated);
+    setSelected(null);setLegalMvs([]);setPromoInfo(null);
+  }
+
+  function handleResign(){
+    if(!window.confirm('Are you sure you want to resign?'))return;
+    const rid=roomIdRef.current,mc=myColorRef.current;
+    const state=Store.load(rid);
+    if(!state||state.status!=='playing')return;
+    const u={...state,status:'finished',result:mc==='w'?'black':'white',reason:'resign'};
+    Store.save(rid,u);setGs(u);
+  }
+
+  function resetAll(){
+    clearInterval(pollRef.current);pollRef.current=null;
+    setScreen('home');setGs(null);setRoomId('');setJoinCode('');
+    setMyColor(null);setMyToken('');setSelected(null);setLegalMvs([]);
+    setPromoInfo(null);setError('');setCopied(false);
+  }
+
+  // Derived
+  const isMyTurn=gs?.turn===myColor&&gs?.status==='playing';
+  const ckCol=gs?.status==='playing'&&inCheck(gs.board,gs.turn)?gs.turn:null;
+  const ckSq=ckCol?findKing(gs.board,ckCol):null;
+  const opCol=myColor==='w'?'b':'w';
+  const myCapt=myColor==='w'?gs?.captW:gs?.captB;
+  const opCapt=myColor==='w'?gs?.captB:gs?.captW;
+  const myTime=myColor==='w'?times.w:times.b;
+  const opTime=myColor==='w'?times.b:times.w;
+  const myRes=gs?.result?(gs.result===(myColor==='w'?'white':'black')?'win':gs.result==='draw'?'draw':'loss'):null;
+  const opRes=gs?.result?(gs.result===(opCol==='w'?'white':'black')?'win':gs.result==='draw'?'draw':'loss'):null;
+
+  const BG='#161512',PNL='#1e1c19',BRD='#2e2c29';
+
+  // ══════════════════════════════════════
+  // SCREEN: HOME
+  // ══════════════════════════════════════
+  if(screen==='home') return(
+    <div style={{minHeight:'100vh',background:BG,display:'flex',alignItems:'center',justifyContent:'center',padding:20}}>
+      <div style={{animation:'fadeIn .5s ease',maxWidth:420,width:'100%'}}>
+
+        {/* Header */}
+        <div style={{textAlign:'center',marginBottom:44}}>
+          <div style={{fontSize:72,marginBottom:16,display:'inline-block',animation:'float 3s ease-in-out infinite',
+            filter:'drop-shadow(0 8px 20px rgba(0,0,0,0.6))'}}>♟</div>
+          <h1 style={{color:'#e8e6e3',fontSize:32,fontWeight:300,margin:'0 0 10px',letterSpacing:3,textTransform:'uppercase'}}>
+            Chess Online
+          </h1>
+          <p style={{color:'#555',margin:0,fontSize:13,letterSpacing:2}}>
+            CREATE A ROOM · SHARE THE CODE · PLAY
+          </p>
+        </div>
+
+        <div style={{display:'flex',flexDirection:'column',gap:16}}>
+
+          {/* Create Button */}
+          <button className="btn" onClick={createRoom}
+            style={{background:'linear-gradient(135deg,#81b64c,#5a8a2a)',borderRadius:10,
+              padding:'16px 20px',color:'#fff',fontSize:16,fontWeight:600,letterSpacing:2,
+              textTransform:'uppercase',boxShadow:'0 4px 20px rgba(129,182,76,0.3)',
+              display:'flex',alignItems:'center',justifyContent:'center',gap:10}}>
+            <span style={{fontSize:22}}>♔</span> Create New Game
+          </button>
+
+          {/* Divider */}
+          <div style={{display:'flex',alignItems:'center',gap:14,padding:'4px 0'}}>
+            <div style={{flex:1,height:1,background:'#2a2826'}}/>
+            <span style={{color:'#555',fontSize:12,letterSpacing:2,textTransform:'uppercase'}}>or join a game</span>
+            <div style={{flex:1,height:1,background:'#2a2826'}}/>
+          </div>
+
+          {/* Join Section */}
+          <div style={{background:PNL,borderRadius:12,padding:20,border:`1px solid ${BRD}`,
+            boxShadow:'0 4px 16px rgba(0,0,0,0.3)'}}>
+            <div style={{color:'#888',fontSize:12,marginBottom:12,letterSpacing:2,textTransform:'uppercase',fontWeight:600}}>
+              Enter Room Code
+            </div>
+            <div style={{display:'flex',gap:10}}>
+              <input value={joinCode}
+                onChange={e=>setJoinCode(e.target.value.toUpperCase().replace(/[^A-Z0-9]/g,'').slice(0,6))}
+                onKeyDown={e=>{if(e.key==='Enter')joinRoom()}}
+                placeholder="e.g. ABC123" maxLength={6}
+                style={{flex:1,background:'#141210',border:`2px solid ${error?'#e8624a':'#333'}`,
+                  borderRadius:8,padding:'12px 16px',color:'#e8e6e3',fontSize:24,fontWeight:700,
+                  letterSpacing:8,textTransform:'uppercase',textAlign:'center',fontFamily:'monospace',
+                  transition:'border-color .2s'}}
+                onFocus={e=>{e.currentTarget.style.borderColor='#81b64c';setError('')}}
+                onBlur={e=>{e.currentTarget.style.borderColor=error?'#e8624a':'#333'}}/>
+              <button className="btn" onClick={joinRoom}
+                style={{background:'linear-gradient(135deg,#2a5a9a,#1a3a6a)',borderRadius:8,
+                  padding:'12px 22px',color:'#7ab4e8',fontSize:14,fontWeight:600,letterSpacing:1,
+                  border:'1px solid #3a6a9a',whiteSpace:'nowrap'}}>
+                Join →
+              </button>
+            </div>
+          </div>
+
+          {/* Error */}
+          {error&&(
+            <div style={{color:'#e8624a',fontSize:13,textAlign:'center',padding:'12px 16px',
+              background:'rgba(232,98,74,0.08)',borderRadius:8,border:'1px solid rgba(232,98,74,0.2)',
+              animation:'fadeIn .3s ease'}}>
+              ⚠ {error}
+            </div>
+          )}
+        </div>
+
+        {/* Instructions */}
+        <div style={{marginTop:40,textAlign:'center',padding:'20px 16px',background:'rgba(255,255,255,0.015)',
+          borderRadius:10,border:'1px solid #222'}}>
+          <div style={{color:'#555',fontSize:13,lineHeight:2,letterSpacing:.5}}>
+            <strong style={{color:'#81b64c'}}>How to play:</strong><br/>
+            <span style={{color:'#888'}}>1.</span> Player 1 clicks <strong style={{color:'#aaa'}}>"Create New Game"</strong><br/>
+            <span style={{color:'#888'}}>2.</span> Share the <strong style={{color:'#aaa'}}>6-letter code</strong> with Player 2<br/>
+            <span style={{color:'#888'}}>3.</span> Player 2 enters the code and clicks <strong style={{color:'#aaa'}}>"Join"</strong><br/>
+            <span style={{color:'#888'}}>4.</span> Game starts automatically! ♟
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+
+  // ══════════════════════════════════════
+  // SCREEN: WAITING FOR OPPONENT
+  // ══════════════════════════════════════
+  if(screen==='waiting') return(
+    <div style={{minHeight:'100vh',background:BG,display:'flex',alignItems:'center',justifyContent:'center',padding:20}}>
+      <div style={{textAlign:'center',maxWidth:460,width:'100%',animation:'fadeIn .4s ease'}}>
+
+        <div style={{fontSize:52,marginBottom:20}}>⏳</div>
+        <h2 style={{color:'#e8e6e3',margin:'0 0 8px',fontSize:24,fontWeight:300,letterSpacing:2,textTransform:'uppercase'}}>
+          Waiting for Opponent
+        </h2>
+        <p style={{color:'#666',margin:'0 0 32px',fontSize:13,lineHeight:1.8}}>
+          Share the room code below with your friend.<br/>
+          They need to open this page and enter the code to join.
+        </p>
+
+        {/* Room Code Display */}
+        <div style={{background:PNL,border:`1px solid ${BRD}`,borderRadius:16,padding:'32px 40px',
+          marginBottom:20,boxShadow:'0 8px 40px rgba(0,0,0,0.5)'}}>
+          <div style={{color:'#666',fontSize:11,marginBottom:14,textTransform:'uppercase',letterSpacing:4,fontWeight:600}}>
+            Your Room Code
+          </div>
+          <div style={{background:'linear-gradient(90deg,#81b64c,#a8d870,#81b64c)',backgroundSize:'200% auto',
+            animation:'shimmer 3s linear infinite',WebkitBackgroundClip:'text',WebkitTextFillColor:'transparent',
+            fontSize:60,fontWeight:900,letterSpacing:14,fontFamily:'monospace',marginBottom:4}}>
+            {roomId}
+          </div>
+          <div style={{color:'#444',fontSize:12,marginTop:8}}>
+            Tell your friend to enter this code
+          </div>
+        </div>
+
+        {/* Action Buttons */}
+        <div style={{display:'flex',gap:10,justifyContent:'center',flexWrap:'wrap',marginBottom:24}}>
+          <button className="btn" onClick={()=>{
+            navigator.clipboard?.writeText(roomId).then(()=>{setCopied(true);setTimeout(()=>setCopied(false),2500)}).catch(()=>{})
+          }} style={{background:copied?'#1a3a1a':PNL,border:`1px solid ${copied?'#81b64c':BRD}`,borderRadius:8,
+            padding:'10px 20px',color:copied?'#81b64c':'#888',fontSize:13,transition:'all .2s'}}>
+            {copied?'✓ Code Copied!':'📋 Copy Code'}
+          </button>
+          <button className="btn" onClick={()=>{
+            const url=window.location.origin+window.location.pathname;
+            navigator.clipboard?.writeText(url).catch(()=>{})
+          }} style={{background:PNL,border:`1px solid ${BRD}`,borderRadius:8,
+            padding:'10px 20px',color:'#888',fontSize:13}}>
+            🔗 Copy Page Link
+          </button>
+        </div>
+
+        {/* Status */}
+        <div style={{background:'rgba(129,182,76,0.06)',border:'1px solid rgba(129,182,76,0.15)',
+          borderRadius:10,padding:'14px 20px',marginBottom:20}}>
+          <div style={{color:'#aaa',fontSize:13,marginBottom:8}}>
+            You are playing as <strong style={{color:'#f0d9b5'}}>White ♔</strong>
+          </div>
+          <div style={{display:'flex',alignItems:'center',gap:8,justifyContent:'center'}}>
+            <div style={{width:10,height:10,borderRadius:'50%',background:'#81b64c',animation:'pulse 1.5s infinite'}}/>
+            <span style={{color:'#81b64c',fontSize:13,fontWeight:500}}>Waiting for Black ♚ to join...</span>
+          </div>
+        </div>
+
+        <button className="btn" onClick={resetAll}
+          style={{background:'transparent',border:`1px solid ${BRD}`,borderRadius:8,
+            padding:'10px 24px',color:'#666',fontSize:13}}>
+          ← Cancel & Go Back
+        </button>
+      </div>
+    </div>
+  );
+
+  // ══════════════════════════════════════
+  // SCREEN: GAME
+  // ══════════════════════════════════════
+  const turnMsg=gs?.status==='finished'
+    ?(gs.result==='draw'?'½ — ½  Draw':gs.result==='white'?'1 — 0  White Wins':'0 — 1  Black Wins')
+    :gs?.status==='playing'?(isMyTurn?'🟢 Your Turn':`⏳ Opponent's Turn`):'Starting...';
+
+  return(
+    <div style={{minHeight:'100vh',background:BG,display:'flex',alignItems:'center',justifyContent:'center',padding:16}}>
+      <div style={{display:'flex',gap:16,alignItems:'flex-start',maxWidth:940,width:'100%',
+        flexWrap:'wrap',justifyContent:'center',animation:'fadeIn .3s ease'}}>
+
+        {/* Board Column */}
+        <div style={{display:'flex',flexDirection:'column',gap:8,flexShrink:0}}>
+          <PlayerBar color={opCol} captured={opCapt||[]} timeMs={opTime}
+            active={gs?.turn===opCol&&gs?.status==='playing'}
+            label={opCol==='w'?'White ♔':'Black ♚'} result={opRes}/>
+
+          <div style={{position:'relative',marginLeft:24}}>
+            {gs&&<ChessBoard board={gs.board} myColor={myColor} selected={selected}
+              legalMvs={legalMvs} lastMove={gs.lastMove} isMyTurn={isMyTurn}
+              checkSq={ckSq} onClick={handleClick}/>}
+            {promoInfo&&<PromoDialog color={myColor}
+              onChoose={p=>doExecMove(promoInfo.fr,promoInfo.ff,promoInfo.tr,promoInfo.tf,p)}/>}
+            {gs?.status==='finished'&&<GameOverBanner
+              result={gs.result==='white'?'w':gs.result==='black'?'b':'draw'}
+              reason={gs.reason} myColor={myColor} onNewGame={resetAll}/>}
+          </div>
+
+          <PlayerBar color={myColor} captured={myCapt||[]} timeMs={myTime}
+            active={gs?.turn===myColor&&gs?.status==='playing'}
+            label={(myColor==='w'?'White ♔':'Black ♚')+' (You)'} result={myRes}/>
+        </div>
+
+        {/* Sidebar */}
+        <div style={{flex:1,minWidth:210,maxWidth:260,background:PNL,borderRadius:12,
+          border:`1px solid ${BRD}`,display:'flex',flexDirection:'column',height:565,overflow:'hidden',
+          boxShadow:'0 8px 32px rgba(0,0,0,0.4)'}}>
+
+          {/* Turn Status */}
+          <div style={{padding:'14px 16px',borderBottom:`1px solid ${BRD}`,background:'#1a1816'}}>
+            <div style={{color:isMyTurn?'#81b64c':gs?.status==='finished'?'#f0c040':'#e8e6e3',
+              fontWeight:600,fontSize:14}}>{turnMsg}</div>
+            <div style={{color:'#444',fontSize:11,marginTop:5,letterSpacing:1,display:'flex',alignItems:'center',gap:8}}>
+              ROOM <span style={{color:'#81b64c',fontWeight:700,letterSpacing:3,fontFamily:'monospace',fontSize:13}}>{roomId}</span>
+              <span style={{marginLeft:'auto',color:connStatus==='connected'?'#4a7a4a':'#7a4a4a',fontSize:10}}>
+                ● {connStatus==='connected'?'Live':'...'}
+              </span>
+            </div>
+          </div>
+
+          {/* Move List */}
+          <MoveList history={gs?.history||[]}/>
+
+          {/* Bottom Actions */}
+          <div style={{padding:12,borderTop:`1px solid ${BRD}`,display:'flex',gap:8}}>
+            {gs?.status==='playing'&&(
+              <button className="btn" onClick={handleResign}
+                style={{flex:1,background:'rgba(232,98,74,0.06)',border:'1px solid #4a2a2a',borderRadius:8,
+                  padding:'9px',color:'#884040',fontSize:13,fontWeight:500,transition:'all .2s'}}
+                onMouseEnter={e=>{e.currentTarget.style.background='rgba(232,98,74,0.15)';e.currentTarget.style.color='#e8624a'}}
+                onMouseLeave={e=>{e.currentTarget.style.background='rgba(232,98,74,0.06)';e.currentTarget.style.color='#884040'}}>
+                🏳 Resign
+              </button>
+            )}
+            {gs?.status==='finished'&&(
+              <button className="btn" onClick={resetAll}
+                style={{flex:1,background:'linear-gradient(135deg,#81b64c,#6a9a3a)',borderRadius:8,
+                  padding:'9px',color:'#fff',fontSize:13,fontWeight:700}}>
+                ✦ New Game
+              </button>
+            )}
+            <button className="btn" onClick={resetAll} title="Home"
+              style={{background:'transparent',border:`1px solid ${BRD}`,borderRadius:8,
+                padding:'9px 14px',color:'#666',fontSize:16,lineHeight:1,transition:'all .2s'}}
+              onMouseEnter={e=>e.currentTarget.style.color='#e8e6e3'}
+              onMouseLeave={e=>e.currentTarget.style.color='#666'}>
+              ⌂
+            </button>
+          </div>
+
+          {/* Waiting Indicator */}
+          {gs?.status==='playing'&&!isMyTurn&&(
+            <div style={{padding:'10px 16px',borderTop:`1px solid ${BRD}`,textAlign:'center',
+              color:'#555',fontSize:12,fontStyle:'italic',display:'flex',alignItems:'center',justifyContent:'center',gap:8}}>
+              <div style={{width:6,height:6,borderRadius:'50%',background:'#f0c040',animation:'pulse 1.5s infinite'}}/>
+              Waiting for opponent...
+            </div>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// ════════════════════════════════════════════
+// MOUNT
+// ════════════════════════════════════════════
+ReactDOM.createRoot(document.getElementById('root')).render(<App/>);
+</script>
+</body>
+</html>
