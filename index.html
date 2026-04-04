@@ -122,7 +122,7 @@ input[type=checkbox]{width:auto;margin:0;padding:0;cursor:pointer;accent-color:v
 .game-left{display:flex;flex-direction:column;gap:0;align-items:stretch;flex-shrink:0;height:100%;min-width:0}
 
 /* RIGHT COLUMN */
-.game-right{display:flex;flex-direction:column;gap:.6rem;width:260px;flex-shrink:0;overflow-y:auto;height:100%}
+.game-right{display:flex;flex-direction:column;gap:0;width:260px;flex-shrink:0;overflow:hidden;height:100%}
 
 /* BOARD OUTER WRAPPER with coordinates outside */
 .board-outer{display:flex;flex-direction:column;flex:1;min-height:0;min-width:0}
@@ -186,7 +186,7 @@ input[type=checkbox]{width:auto;margin:0;padding:0;cursor:pointer;accent-color:v
 .stext{font-family:var(--fn);font-size:.75rem;letter-spacing:.1em;color:var(--gold)}
 
 /* MOVE HISTORY */
-.mhist{background:var(--surface);border:1px solid var(--border);flex:1;overflow-y:auto;padding:.5rem .6rem;min-height:0}
+.mhist{background:var(--surface);border:1px solid var(--border);border-bottom:none;flex:1;overflow-y:auto;padding:.5rem .6rem;min-height:0}
 .mhist-title{font-family:var(--fn);font-size:.6rem;letter-spacing:.2em;color:var(--gold);text-transform:uppercase;margin-bottom:.5rem}
 .mlist{font-family:var(--fm);font-size:.75rem;color:var(--text-dim);line-height:1}
 .mpair{display:grid;grid-template-columns:28px 1fr 1fr;gap:0;padding:.28rem .1rem;border-bottom:1px solid rgba(255,255,255,.04)}
@@ -194,7 +194,7 @@ input[type=checkbox]{width:auto;margin:0;padding:0;cursor:pointer;accent-color:v
 .mw,.mb{color:var(--text);padding:.0rem .35rem;border-radius:2px;cursor:pointer}.mw:hover,.mb:hover{background:rgba(201,168,76,.12)}
 
 /* CHAT */
-.chat{background:var(--surface);border:1px solid var(--border);display:flex;flex-direction:column;height:170px;flex-shrink:0}
+.chat{background:var(--surface);border:1px solid var(--border);display:flex;flex-direction:column;height:185px;flex-shrink:0}
 .chat-msgs{flex:1;overflow-y:auto;padding:.45rem .55rem;font-size:.7rem;font-family:var(--fm);line-height:1.5}
 .cm-user{color:var(--gold)}.cm-sys{color:var(--text-dim);font-style:italic}.cm-txt{color:var(--text)}
 .chat-row{display:flex;border-top:1px solid var(--border)}
@@ -601,38 +601,32 @@ input[type=checkbox]{width:auto;margin:0;padding:0;cursor:pointer;accent-color:v
 
     <!-- Right: panel -->
     <div class="game-right">
-      <div class="gpanel">
-        <div class="card-title" style="margin-bottom:.4rem">Game Room</div>
-        <div id="gid-display" class="gid">—</div>
-        <div class="gid-sub">Share this ID or link with opponent</div>
-        <div class="grow" style="margin-top:.6rem">
-          <span>Mode</span><span id="mode-badge" class="gval">Local</span>
+      <!-- Compact info strip -->
+      <div style="background:var(--surface);border:1px solid var(--border);border-bottom:none;padding:.4rem .65rem;display:flex;align-items:center;justify-content:space-between;flex-shrink:0;gap:.4rem">
+        <div style="display:flex;align-items:center;gap:.45rem;min-width:0">
+          <div style="font-family:var(--fn);font-size:.58rem;letter-spacing:.15em;color:var(--gold);white-space:nowrap">ROOM</div>
+          <div id="gid-display" style="font-family:var(--fm);font-size:.72rem;color:var(--text);letter-spacing:.1em">—</div>
+          <span id="mode-badge" style="font-family:var(--fm);font-size:.52rem;letter-spacing:.1em;color:var(--text-dim)">LOCAL</span>
         </div>
-        <div class="grow">
-          <span>Board</span><span id="theme-badge" class="gval" style="color:var(--text-dim)">Classic Wood</span>
-        </div>
-        <div class="grow">
-          <span>Discord</span><span id="dc-status" class="gval" style="color:var(--text-dim)">—</span>
-        </div>
-        <div class="grow">
-          <span>Notify moves</span>
-          <label style="display:flex;align-items:center;gap:.3rem;margin:0;padding:0">
-            <input type="checkbox" id="notify-moves">
+        <div style="display:flex;align-items:center;gap:.3rem;flex-shrink:0">
+          <label style="display:flex;align-items:center;gap:.2rem;margin:0;padding:0;font-family:var(--fm);font-size:.56rem;color:var(--text-dim);cursor:pointer;white-space:nowrap" title="Notify moves">
+            <input type="checkbox" id="notify-moves" style="margin:0;padding:0;width:auto">notify
           </label>
-        </div>
-        <div class="grow" style="margin-top:.4rem;padding-top:.4rem;border-top:1px solid var(--border)">
-          <span>Moves</span><span id="move-count" class="gval">0</span>
+          <button class="btn btn-s btn-sm" onclick="applyRandomTheme()" title="Shuffle board theme" style="padding:.18rem .38rem;font-size:.58rem">🎨</button>
+          <button class="btn btn-s btn-sm" onclick="copyPGN()" title="Export PGN" style="padding:.18rem .38rem;font-size:.58rem">PGN</button>
         </div>
       </div>
 
+      <!-- Move History — fills all remaining space -->
       <div class="mhist">
-        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:.5rem">
-          <div class="mhist-title" style="margin-bottom:0">Move History</div>
-          <button class="btn btn-s btn-sm" onclick="applyRandomTheme()" title="Shuffle board theme">🎨</button>
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:.4rem">
+          <div class="mhist-title" style="margin-bottom:0">MOVES &nbsp;<span id="move-count" style="color:var(--text-dim);font-weight:400">0</span></div>
+          <span id="theme-badge" style="font-family:var(--fm);font-size:.55rem;color:var(--text-dim)">Classic Wood</span>
         </div>
         <div id="mlist" class="mlist"><span style="color:var(--text-dim);font-style:italic">No moves yet</span></div>
       </div>
 
+      <!-- Chat — fixed at bottom -->
       <div class="chat">
         <div id="chat-msgs" class="chat-msgs"><span class="cm-sys">Game chat</span></div>
         <div class="chat-row">
@@ -640,8 +634,6 @@ input[type=checkbox]{width:auto;margin:0;padding:0;cursor:pointer;accent-color:v
           <button class="chat-send" onclick="sendChat()">SEND</button>
         </div>
       </div>
-
-      <button class="btn btn-s" onclick="copyPGN()" style="width:100%;font-size:.6rem">EXPORT PGN</button>
     </div>
   </div>
 </div>
@@ -667,9 +659,9 @@ let pName='Anonymous', webhook='', db=null, useFirebase=false;
 let game=null, gid=null, pColor='w', selSq=null, vmoves=[], lastMv=null, pendPromo=null;
 let gStatus='waiting', localGames={}, fbListener=null;
 const FILES=['a','b','c','d','e','f','g','h'];
-const PIECE_BASE='https://images.chesscomfiles.com/chess-themes/pieces/neo/150/';
+const PIECE_BASE='https://lichess1.org/assets/piece/california/';
 const PIECE_SVG={wk:'wK',wq:'wQ',wr:'wR',wb:'wB',wn:'wN',wp:'wP',bk:'bK',bq:'bQ',br:'bR',bb:'bB',bn:'bN',bp:'bP'};
-const PIECE_EXT='.png';
+const PIECE_EXT='.svg';
 let dragSq=null,dragEl=null,dragOverSq=null;;
 
 // ══════════════════════════════════════════════
