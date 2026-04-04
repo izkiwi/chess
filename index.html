@@ -6,6 +6,7 @@
 <title>KIWI CHESS — Global Network</title>
 <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;900&family=Crimson+Pro:ital,wght@0,300;0,400;1,300&family=Share+Tech+Mono&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/chess.js@0.10.3/chess.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
 <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
 <style>
@@ -134,7 +135,8 @@ input[type=checkbox]{width:auto;margin:0;padding:0;cursor:pointer;accent-color:v
 
 /* BOARD */
 .board-wrap{position:relative;height:100%;aspect-ratio:1/1;flex-shrink:0;max-height:clamp(380px,calc(100vh - 200px),660px);max-width:clamp(380px,calc(100vh - 200px),660px)}
-.board{display:grid;grid-template-columns:repeat(8,1fr);grid-template-rows:repeat(8,1fr);width:100%;height:100%;border:2px solid #8b5a2b;box-shadow:0 0 0 1px #5c3317,0 8px 40px rgba(0,0,0,.85)}
+.board{width:100%;height:100%;overflow:hidden;border-radius:2px}
+.board canvas{display:block;width:100%!important;height:100%!important}
 .sq{display:flex;align-items:center;justify-content:center;cursor:pointer;position:relative;transition:filter .08s;user-select:none;-webkit-user-select:none}
 .sq.lt{background:#f0d9b5}.sq.dk{background:#b58863}
 
@@ -569,7 +571,7 @@ input[type=checkbox]{width:auto;margin:0;padding:0;cursor:pointer;accent-color:v
             <div class="rank-label">2</div><div class="rank-label">1</div>
           </div>
           <div class="board-wrap" style="flex:1;min-height:0;aspect-ratio:1">
-            <div id="board" class="board theme-classic"></div>
+            <div id="board" class="board"></div>
           </div>
         </div>
         <!-- File letters outside board -->
@@ -659,14 +661,19 @@ let pName='Anonymous', webhook='', db=null, useFirebase=false;
 let game=null, gid=null, pColor='w', selSq=null, vmoves=[], lastMv=null, pendPromo=null;
 let gStatus='waiting', localGames={}, fbListener=null;
 const FILES=['a','b','c','d','e','f','g','h'];
-const PIECE_BASE='https://lichess1.org/assets/piece/california/';
-const PIECE_SVG={wk:'wK',wq:'wQ',wr:'wR',wb:'wB',wn:'wN',wp:'wP',bk:'bK',bq:'bQ',br:'bR',bb:'bB',bn:'bN',bp:'bP'};
-const PIECE_EXT='.svg';
-let dragSq=null,dragEl=null,dragOverSq=null;;
+let dragSq=null,dragEl=null,dragOverSq=null;
 
 // ══════════════════════════════════════════════
-// BOARD THEMES
+// BOARD THEMES (3D colours)
 // ══════════════════════════════════════════════
+const BOARD_THEMES_3D=[
+  {light:0xf0d9b5,dark:0xb58863,frame:0x5c3317},
+  {light:0xdfc49a,dark:0x5e3520,frame:0x3e1a0a},
+  {light:0xe8d5a3,dark:0x7a5514,frame:0x4a3008},
+  {light:0xe8c8b0,dark:0x7d3322,frame:0x5a2015},
+  {light:0xeacfb8,dark:0x8b4030,frame:0x6a2a1e},
+  {light:0xe8dcc8,dark:0x2e2e2e,frame:0x1a1a1a},
+];
 const THEMES=[
   {cls:'theme-classic',name:'Maple Wood'},
   {cls:'theme-ocean',  name:'Dark Walnut'},
@@ -680,16 +687,204 @@ let currentTheme=THEMES[0];
 function applyRandomTheme(){
   const t=THEMES[Math.floor(Math.random()*THEMES.length)];
   currentTheme=t;
-  const board=document.getElementById('board');
-  THEMES.forEach(th=>board.classList.remove(th.cls));
-  board.classList.add(t.cls);
   const badge=document.getElementById('theme-badge');
   if(badge)badge.textContent=t.name;
+  const idx=THEMES.indexOf(t);
+  const colors=BOARD_THEMES_3D[idx]||BOARD_THEMES_3D[0];
+  if(_t3){
+    for(let col=0;col<8;col++)for(let row=0;row<8;row++){
+      const mesh=_t3.squareMeshes[col+'_'+row];
+      if(mesh)mesh.material.color.setHex((col+row)%2===0?colors.light:colors.dark);
+    }
+    if(_t3.frameMesh)_t3.frameMesh.material.color.setHex(colors.frame);
+  }
 }
 
 // ══════════════════════════════════════════════
-// CHESS CLOCK
+// THREE.JS 3D ENGINE
 // ══════════════════════════════════════════════
+let _t3=null;
+
+function v2(x,y){return new THREE.Vector2(x,y);}
+function lathe(pts,seg=28){return new THREE.LatheGeometry(pts,seg);}
+
+function sqToPos3D(sq){
+  const fi=sq.charCodeAt(0)-97, ri=parseInt(sq[1])-1;
+  let col,row;
+  if(pColor==='b'){col=7-fi;row=ri;}else{col=fi;row=7-ri;}
+  return{x:col-3.5,z:row-3.5};
+}
+function colRowToSq(col,row){
+  let fi,ri;
+  if(pColor==='b'){fi=7-col;ri=row;}else{fi=col;ri=7-row;}
+  return FILES[fi]+(ri+1);
+}
+
+/* ── Piece geometry profiles ── */
+function geoP(){return lathe([v2(0,0),v2(0.27,0),v2(0.31,0.05),v2(0.25,0.11),v2(0.15,0.21),v2(0.12,0.30),v2(0.21,0.45),v2(0.24,0.54),v2(0.19,0.63),v2(0.12,0.69),v2(0,0.69)]);}
+function geoB(){return lathe([v2(0,0),v2(0.29,0),v2(0.33,0.05),v2(0.27,0.12),v2(0.17,0.23),v2(0.12,0.36),v2(0.18,0.51),v2(0.20,0.59),v2(0.15,0.69),v2(0.09,0.78),v2(0.055,0.84),v2(0.075,0.89),v2(0,0.91)]);}
+function geoQ(){return lathe([v2(0,0),v2(0.32,0),v2(0.36,0.06),v2(0.28,0.14),v2(0.19,0.25),v2(0.15,0.38),v2(0.21,0.51),v2(0.24,0.60),v2(0.18,0.71),v2(0.12,0.78),v2(0.16,0.85),v2(0.21,0.90),v2(0.19,0.95),v2(0,0.95)]);}
+function geoK(){return lathe([v2(0,0),v2(0.31,0),v2(0.35,0.06),v2(0.27,0.14),v2(0.18,0.25),v2(0.14,0.38),v2(0.20,0.51),v2(0.23,0.60),v2(0.17,0.71),v2(0.11,0.79),v2(0.11,0.87),v2(0,0.87)]);}
+
+function rookGroup(mat){
+  const g=new THREE.Group();
+  g.add(new THREE.Mesh(lathe([v2(0,0),v2(0.30,0),v2(0.34,0.05),v2(0.28,0.11),v2(0.19,0.20),v2(0.17,0.54),v2(0.25,0.59),v2(0.27,0.64)]),mat));
+  [[-.17,.71,-.17],[.17,.71,-.17],[-.17,.71,.17],[.17,.71,.17]].forEach(([x,y,z])=>{
+    const m=new THREE.Mesh(new THREE.BoxGeometry(0.11,0.13,0.11),mat);
+    m.position.set(x,y,z);g.add(m);
+  });
+  const cap=new THREE.Mesh(new THREE.CylinderGeometry(0.19,0.24,0.04,20),mat);
+  cap.position.y=0.65;g.add(cap);
+  return g;
+}
+
+function knightGroup(mat,isW){
+  const g=new THREE.Group();
+  g.add(new THREE.Mesh(lathe([v2(0,0),v2(0.29,0),v2(0.33,0.05),v2(0.27,0.11),v2(0.19,0.20),v2(0.15,0.30),v2(0.15,0.33)]),mat));
+  const neck=new THREE.Mesh(new THREE.CylinderGeometry(0.11,0.15,0.28,16),mat);
+  neck.position.set(0.02,0.47,0);neck.rotation.z=-0.15;g.add(neck);
+  const body=new THREE.Mesh(new THREE.SphereGeometry(0.19,20,16),mat);
+  body.scale.set(0.85,1.30,0.78);body.position.set(0.04,0.55,0);body.rotation.z=-0.27;g.add(body);
+  const head=new THREE.Mesh(new THREE.SphereGeometry(0.16,18,14),mat);
+  head.scale.set(0.88,1.04,0.78);head.position.set(0.09,0.75,0);head.rotation.z=-0.48;g.add(head);
+  const snout=new THREE.Mesh(new THREE.BoxGeometry(0.19,0.10,0.20),mat);
+  snout.position.set(0.23,0.67,0);snout.rotation.z=0.28;g.add(snout);
+  [[0.05,0.87,0.07],[0.05,0.87,-0.07]].forEach(([x,y,z])=>{
+    const ear=new THREE.Mesh(new THREE.ConeGeometry(0.04,0.09,8),mat);
+    ear.position.set(x,y,z);g.add(ear);
+  });
+  g.rotation.y=isW?Math.PI/2:-Math.PI/2;
+  return g;
+}
+
+function crossGroup(mat){
+  const g=new THREE.Group();
+  const v=new THREE.Mesh(new THREE.BoxGeometry(0.055,0.21,0.055),mat);v.position.y=0.105;g.add(v);
+  const h=new THREE.Mesh(new THREE.BoxGeometry(0.17,0.055,0.055),mat);h.position.y=0.155;g.add(h);
+  return g;
+}
+
+function crownBalls(mat){
+  const g=new THREE.Group();
+  const bg=new THREE.SphereGeometry(0.055,12,10);
+  [[0,0,0],[0.13,0,0],[-0.13,0,0],[0,0,0.13],[0,0,-0.13]].forEach(([x,y,z])=>{
+    const b=new THREE.Mesh(bg,mat);b.position.set(x,y,z);g.add(b);
+  });
+  return g;
+}
+
+function buildPiece(type,color){
+  const isW=color==='w';
+  const mat=new THREE.MeshStandardMaterial({
+    color:isW?0xf2ede0:0x1c0f08,
+    roughness:isW?0.32:0.48,
+    metalness:isW?0.14:0.08,
+  });
+  let grp;
+  if(type==='r'){grp=rookGroup(mat);}
+  else if(type==='n'){grp=knightGroup(mat,isW);}
+  else if(type==='k'){
+    grp=new THREE.Group();
+    grp.add(new THREE.Mesh(geoK(),mat));
+    const cross=crossGroup(mat);cross.position.y=0.87;grp.add(cross);
+  }else if(type==='q'){
+    grp=new THREE.Group();
+    grp.add(new THREE.Mesh(geoQ(),mat));
+    const crown=crownBalls(mat);crown.position.y=0.96;grp.add(crown);
+  }else{
+    const geoFn={p:geoP,b:geoB}[type];
+    grp=new THREE.Group();
+    grp.add(new THREE.Mesh(geoFn?geoFn():geoP(),mat));
+  }
+  grp.scale.setScalar(0.39);
+  grp.userData.pieceColor=color;grp.userData.pieceType=type;
+  return grp;
+}
+
+function initThreeBoard(){
+  const container=document.getElementById('board');
+  if(!container)return;
+  // Tear down old renderer
+  if(_t3){_t3.renderer.dispose();container.innerHTML='';}
+  const w=container.clientWidth||400,h=container.clientHeight||400;
+  const renderer=new THREE.WebGLRenderer({antialias:true,alpha:false});
+  renderer.setSize(w,h);renderer.setPixelRatio(Math.min(window.devicePixelRatio,2));
+  renderer.shadowMap.enabled=true;renderer.shadowMap.type=THREE.PCFSoftShadowMap;
+  container.innerHTML='';container.appendChild(renderer.domElement);
+
+  const scene=new THREE.Scene();
+  scene.background=new THREE.Color(0x080c14);
+  scene.fog=new THREE.FogExp2(0x080c14,0.032);
+
+  const camera=new THREE.PerspectiveCamera(42,w/h,0.1,100);
+  camera.position.set(0,11.5,9);camera.lookAt(0,0,0);
+
+  // Lights
+  scene.add(new THREE.AmbientLight(0xfff8f0,0.50));
+  const sun=new THREE.DirectionalLight(0xfff8f0,1.6);
+  sun.position.set(5,15,8);sun.castShadow=true;
+  sun.shadow.mapSize.width=2048;sun.shadow.mapSize.height=2048;
+  sun.shadow.camera.left=-8;sun.shadow.camera.right=8;
+  sun.shadow.camera.top=8;sun.shadow.camera.bottom=-8;
+  sun.shadow.camera.far=50;
+  scene.add(sun);
+  const fill=new THREE.DirectionalLight(0x8899cc,0.35);
+  fill.position.set(-5,5,-5);scene.add(fill);
+  const gold=new THREE.PointLight(0xc9a84c,0.9,25);
+  gold.position.set(0,9,7);scene.add(gold);
+
+  // Board squares
+  const idx=THEMES.indexOf(currentTheme);
+  const colors=BOARD_THEMES_3D[Math.max(0,idx)];
+  const squareMeshes={};
+  for(let col=0;col<8;col++)for(let row=0;row<8;row++){
+    const isLt=(col+row)%2===0;
+    const mesh=new THREE.Mesh(
+      new THREE.BoxGeometry(1,0.14,1),
+      new THREE.MeshStandardMaterial({color:isLt?colors.light:colors.dark,roughness:0.62,metalness:0.04})
+    );
+    mesh.position.set(col-3.5,-0.07,row-3.5);
+    mesh.receiveShadow=true;
+    mesh.userData.col=col;mesh.userData.row=row;
+    scene.add(mesh);
+    squareMeshes[col+'_'+row]=mesh;
+  }
+
+  // Frame
+  const frameMesh=new THREE.Mesh(
+    new THREE.BoxGeometry(9.8,0.20,9.8),
+    new THREE.MeshStandardMaterial({color:colors.frame,roughness:0.72,metalness:0.08})
+  );
+  frameMesh.position.set(0,-0.15,0);frameMesh.receiveShadow=true;scene.add(frameMesh);
+
+  // Floor
+  const floor=new THREE.Mesh(new THREE.PlaneGeometry(22,22),
+    new THREE.MeshStandardMaterial({color:0x050810,roughness:1}));
+  floor.rotation.x=-Math.PI/2;floor.position.y=-0.25;scene.add(floor);
+
+  // Highlight overlay planes
+  const overlays={};
+  for(let col=0;col<8;col++)for(let row=0;row<8;row++){
+    const ov=new THREE.Mesh(
+      new THREE.PlaneGeometry(0.97,0.97),
+      new THREE.MeshBasicMaterial({transparent:true,opacity:0,depthWrite:false,color:0xffff00})
+    );
+    ov.rotation.x=-Math.PI/2;ov.position.set(col-3.5,0.08,row-3.5);ov.renderOrder=2;
+    scene.add(ov);overlays[col+'_'+row]=ov;
+  }
+
+  _t3={renderer,scene,camera,squareMeshes,overlays,frameMesh,pieceMeshes:{}};
+
+  // Animate
+  (function loop(){requestAnimationFrame(loop);renderer.render(scene,camera);})();
+
+  // Resize
+  new ResizeObserver(()=>{
+    const w=container.clientWidth,h=container.clientHeight;
+    if(!w||!h)return;
+    renderer.setSize(w,h);camera.aspect=w/h;camera.updateProjectionMatrix();
+  }).observe(container);
+}
 let clockW=0, clockB=0, clockInterval=null, clockEnabled=false;
 const CLOCK_DEFAULT=600; // 10 min default
 
@@ -850,6 +1045,9 @@ function initGame(data){
   clockW=tcSec; clockB=tcSec;
   updateClocks();
   if(gStatus==='active')startClock();
+  _listenersInit=false;
+  show('game');
+  initThreeBoard();
   renderBoard();updateStatus();renderHistory();updateCaps();
   // Flip coordinate labels for black perspective
   const rl=document.getElementById('rank-labels');
@@ -860,42 +1058,47 @@ function initGame(data){
     rl.innerHTML=ranks.map(r=>`<div class="rank-label">${r}</div>`).join('');
     fl.innerHTML=files.map(f=>`<div class="file-label">${f}</div>`).join('');
   }
-  show('game');
   initBoardListeners();
   if(useFirebase&&db)setupChatListener();
 }
 
 // ══════════════════════════════════════════════
-// BOARD RENDERING
+// BOARD RENDERING (3D)
 // ══════════════════════════════════════════════
 function renderBoard(){
-  const el=document.getElementById('board');
-  el.innerHTML='';
+  if(!_t3)return;
+  const{scene,overlays,pieceMeshes}=_t3;
+  // Remove old pieces
+  Object.values(pieceMeshes).forEach(m=>scene.remove(m));
+  _t3.pieceMeshes={};
+  // Place pieces
   const bd=game.board();
-  const kingSq=game.in_check()?findKing(game.turn()):null;
   for(let r=0;r<8;r++)for(let f=0;f<8;f++){
-    const row=pColor==='b'?7-r:r, col=pColor==='b'?7-f:f;
-    const sq=FILES[col]+(8-row);
-    const piece=bd[row][col];
-    const isLt=(row+col)%2===0;
-    const div=document.createElement('div');
-    div.className='sq '+(isLt?'lt':'dk');
-    div.dataset.sq=sq;
-    // Highlights
-    if(selSq===sq) div.classList.add('sel');
-    if(vmoves.includes(sq)) div.classList.add(piece&&piece.color!==pColor?'vc':'vm');
-    if(lastMv){if(lastMv.from===sq)div.classList.add('lf');if(lastMv.to===sq)div.classList.add('lt2')}
-    if(kingSq&&sq===kingSq) div.classList.add('chk');
-    // Piece image
-    if(piece){
-      const img=document.createElement('img');
-      img.className='piece-img';
-      img.src=PIECE_BASE+PIECE_SVG[piece.color+piece.type]+PIECE_EXT;
-      img.draggable=false;
-      div.style.cursor=(piece.color===pColor&&gStatus==='active'&&game.turn()===pColor)?'grab':'default';
-      div.appendChild(img);
-    }
-    el.appendChild(div);
+    const piece=bd[r][f];if(!piece)continue;
+    const sq=FILES[f]+(8-r);
+    const pos=sqToPos3D(sq);
+    const mesh=buildPiece(piece.type,piece.color);
+    mesh.position.set(pos.x,0,pos.z);
+    mesh.traverse(c=>{if(c.isMesh)c.castShadow=true;});
+    scene.add(mesh);
+    _t3.pieceMeshes[sq]=mesh;
+  }
+  // Highlights
+  const kingSq=game.in_check()?findKing(game.turn()):null;
+  for(let col=0;col<8;col++)for(let row=0;row<8;row++){
+    const sq=colRowToSq(col,row);
+    const ov=overlays[col+'_'+row];
+    if(!ov)continue;
+    let color=null,opacity=0;
+    if(sq===selSq){color=0xffdd00;opacity=0.55;}
+    else if(vmoves.includes(sq)){
+      const p=game.get(sq);
+      if(p&&p.color!==pColor){color=0xff3300;opacity=0.38;}
+      else{color=0x44ff66;opacity=0.30;}
+    }else if(lastMv&&(sq===lastMv.from||sq===lastMv.to)){color=0x99cc00;opacity=0.33;}
+    else if(kingSq&&sq===kingSq){color=0xff1111;opacity=0.62;}
+    if(color!==null){ov.material.color.setHex(color);ov.material.opacity=opacity;}
+    else{ov.material.opacity=0;}
   }
 }
 
@@ -906,227 +1109,111 @@ function findKing(color){
 }
 
 // ══════════════════════════════════════════════
-// UNIFIED INTERACTION ENGINE
+// UNIFIED INTERACTION ENGINE (3D raycasting)
 // ══════════════════════════════════════════════
-// Single source of truth for mouse/touch → select/drag/move
-
-const DRAG_THRESHOLD = 6; // px before drag starts
-let iState = {
-  down: false,       // pointer is held
-  dragging: false,   // threshold exceeded, ghost shown
-  fromSq: null,      // square pressed on
-  startX: 0, startY: 0,
-  ghostEl: null,
-  lastOverSq: null
-};
+const DRAG_THRESHOLD=6;
+let iState={down:false,dragging:false,fromSq:null,startX:0,startY:0,ghostEl:null,lastOverSq:null};
 
 function iCanMove(sq){
-  if(gStatus!=='active') return false;
-  if(game.turn()!==pColor) return false;
-  const p=game.get(sq);
-  return p&&p.color===pColor;
+  if(gStatus!=='active')return false;
+  if(game.turn()!==pColor)return false;
+  const p=game.get(sq);return p&&p.color===pColor;
 }
 
 function getSqFromPoint(x,y){
-  // Temporarily hide ghost so elementFromPoint works
-  const g=iState.ghostEl;
-  if(g) g.style.display='none';
-  const el=document.elementFromPoint(x,y);
-  if(g) g.style.display='';
-  return el?.closest('[data-sq]')?.dataset?.sq||null;
+  if(!_t3)return null;
+  const{renderer,camera}=_t3;
+  const rect=renderer.domElement.getBoundingClientRect();
+  const nx=((x-rect.left)/rect.width)*2-1;
+  const ny=-((y-rect.top)/rect.height)*2+1;
+  const ray=new THREE.Raycaster();
+  ray.setFromCamera({x:nx,y:ny},camera);
+  const hits=ray.intersectObjects(Object.values(_t3.squareMeshes));
+  if(hits.length>0){const{col,row}=hits[0].object.userData;return colRowToSq(col,row);}
+  return null;
 }
 
-function spawnGhost(pieceKey,x,y){
-  if(iState.ghostEl) iState.ghostEl.remove();
-  const img=document.createElement('img');
-  img.className='piece-ghost';
-  img.src=PIECE_BASE+PIECE_SVG[pieceKey]+PIECE_EXT;
-  img.draggable=false;
-  document.body.appendChild(img);
-  iState.ghostEl=img;
-  moveGhost(x,y);
-}
-function moveGhost(x,y){
-  if(iState.ghostEl){
-    iState.ghostEl.style.left=x+'px';
-    iState.ghostEl.style.top=y+'px';
-  }
-}
-function killGhost(){
-  if(iState.ghostEl){iState.ghostEl.remove();iState.ghostEl=null;}
-}
-
+// Ghost (not needed in 3D — piece lifts via highlight instead)
+function spawnGhost(){}
+function moveGhost(){}
+function killGhost(){iState.ghostEl=null;}
+function setDraggingSq(){}
 function setDragOver(sq){
-  // clear previous
   document.querySelectorAll('.drag-over').forEach(e=>e.classList.remove('drag-over'));
-  if(sq&&vmoves.includes(sq)){
-    const el=document.querySelector(`[data-sq="${sq}"]`);
-    if(el) el.classList.add('drag-over');
-  }
   iState.lastOverSq=sq;
 }
 
-function setDraggingSq(sq, on){
-  const el=document.querySelector(`[data-sq="${sq}"]`);
-  if(el) el.classList.toggle('dragging', on);
-}
-
-// ── Pointer down ─────────────────────────────
-function onPointerDown(x, y){
-  if(gStatus!=='active'||game.turn()!==pColor) return;
+function onPointerDown(x,y){
+  if(gStatus!=='active'||game.turn()!==pColor)return;
   const sq=getSqFromPoint(x,y);
-  if(!sq) return;
-  if(!iCanMove(sq)) {
-    // Clicked a non-own-piece sq: handle as click
-    handleClick(sq);
-    return;
-  }
-  iState.down=true;
-  iState.dragging=false;
-  iState.fromSq=sq;
-  iState.startX=x;
-  iState.startY=y;
-  // Select the piece immediately (highlights legal moves)
-  selSq=sq;
-  vmoves=game.moves({square:sq,verbose:true}).map(m=>m.to);
+  if(!sq)return;
+  if(!iCanMove(sq)){handleClick(sq);return;}
+  iState.down=true;iState.dragging=false;iState.fromSq=sq;
+  iState.startX=x;iState.startY=y;
+  selSq=sq;vmoves=game.moves({square:sq,verbose:true}).map(m=>m.to);
   renderBoard();
 }
 
-// ── Pointer move ─────────────────────────────
-function onPointerMove(x, y){
-  if(!iState.down) return;
-  const dx=x-iState.startX, dy=y-iState.startY;
-  if(!iState.dragging && Math.hypot(dx,dy)>DRAG_THRESHOLD){
-    // Threshold crossed — start drag
-    iState.dragging=true;
-    const piece=game.get(iState.fromSq);
-    if(piece){
-      spawnGhost(piece.color+piece.type, x, y);
-      setDraggingSq(iState.fromSq, true);
-    }
-  }
-  if(iState.dragging){
-    moveGhost(x, y);
-    const overSq=getSqFromPoint(x, y);
-    if(overSq!==iState.lastOverSq) setDragOver(overSq);
+function onPointerMove(x,y){
+  if(!iState.down)return;
+  const dx=x-iState.startX,dy=y-iState.startY;
+  if(!iState.dragging&&Math.hypot(dx,dy)>DRAG_THRESHOLD)iState.dragging=true;
+  if(iState.dragging){const ov=getSqFromPoint(x,y);if(ov!==iState.lastOverSq)setDragOver(ov);}
+}
+
+function onPointerUp(x,y){
+  if(!iState.down)return;
+  const fromSq=iState.fromSq,wasDrag=iState.dragging;
+  killGhost();setDragOver(null);
+  iState.down=false;iState.dragging=false;iState.fromSq=null;
+  if(wasDrag){
+    const toSq=getSqFromPoint(x,y);
+    if(toSq&&toSq!==fromSq&&vmoves.includes(toSq))execMove(fromSq,toSq);
+    else if(toSq!==fromSq){selSq=null;vmoves=[];renderBoard();}
   }
 }
 
-// ── Pointer up ───────────────────────────────
-function onPointerUp(x, y){
-  if(!iState.down) return;
-  const fromSq=iState.fromSq;
-  const wasDragging=iState.dragging;
-
-  // Clean up drag visuals
-  killGhost();
-  setDragOver(null);
-  if(fromSq) setDraggingSq(fromSq, false);
-
-  iState.down=false;
-  iState.dragging=false;
-  iState.fromSq=null;
-
-  if(wasDragging){
-    // Drop: find target square
-    const toSq=getSqFromPoint(x, y);
-    if(toSq && toSq!==fromSq && vmoves.includes(toSq)){
-      execMove(fromSq, toSq);
-    } else {
-      // Dropped nowhere valid — keep selection if dropped on same piece
-      if(toSq===fromSq) { /* keep selected */ }
-      else { selSq=null; vmoves=[]; renderBoard(); }
-    }
-  } else {
-    // Was a click — piece was already selected on pointerdown
-    // If clicking on already-selected piece, deselect
-    // (execMove path handled by handleClick for destination clicks)
-  }
-}
-
-// ── Click handler (called for non-own-piece squares & second clicks) ──
 function handleClick(sq){
-  if(gStatus!=='active'||game.turn()!==pColor) return;
+  if(gStatus!=='active'||game.turn()!==pColor)return;
   const piece=game.get(sq);
-  // Clicking a valid destination while something is selected
-  if(selSq && vmoves.includes(sq)){
-    execMove(selSq, sq);
+  if(selSq&&vmoves.includes(sq)){execMove(selSq,sq);return;}
+  if(piece&&piece.color===pColor){
+    if(selSq===sq){selSq=null;vmoves=[];renderBoard();}
+    else{selSq=sq;vmoves=game.moves({square:sq,verbose:true}).map(m=>m.to);renderBoard();}
     return;
   }
-  // Clicking own piece → select (or deselect if same)
-  if(piece && piece.color===pColor){
-    if(selSq===sq){ selSq=null; vmoves=[]; renderBoard(); }
-    else { selSq=sq; vmoves=game.moves({square:sq,verbose:true}).map(m=>m.to); renderBoard(); }
-    return;
-  }
-  // Clicking empty or enemy without selection → clear
-  selSq=null; vmoves=[]; renderBoard();
+  selSq=null;vmoves=[];renderBoard();
 }
 
-// ── Board-level event listeners ───────────────
 let _listenersInit=false;
 function initBoardListeners(){
-  if(_listenersInit) return;
+  if(_listenersInit)return;
   _listenersInit=true;
-  const boardEl=document.getElementById('board');
-
-  // MOUSE
-  boardEl.addEventListener('mousedown', e=>{
-    if(e.button!==0) return;
-    e.preventDefault();
-    onPointerDown(e.clientX, e.clientY);
-  });
-  document.addEventListener('mousemove', e=>{
-    onPointerMove(e.clientX, e.clientY);
-  });
-  document.addEventListener('mouseup', e=>{
-    if(e.button!==0) return;
-    onPointerUp(e.clientX, e.clientY);
-  });
-
-  // TOUCH
-  boardEl.addEventListener('touchstart', e=>{
-    e.preventDefault();
-    const t=e.touches[0];
-    onPointerDown(t.clientX, t.clientY);
-  },{passive:false});
-  document.addEventListener('touchmove', e=>{
-    if(!iState.down) return;
-    e.preventDefault();
-    const t=e.touches[0];
-    onPointerMove(t.clientX, t.clientY);
-  },{passive:false});
-  document.addEventListener('touchend', e=>{
-    if(!iState.down) return;
-    const t=e.changedTouches[0];
-    onPointerUp(t.clientX, t.clientY);
-  });
-
-  // CLICK (handles the destination-click when no drag occurred)
-  boardEl.addEventListener('click', e=>{
-    // Only handle if we are NOT in an active drag/pointer sequence
-    if(iState.down||iState.dragging) return;
-    const sq=e.target.closest('[data-sq]')?.dataset?.sq;
-    if(!sq) return;
-    // If a piece was already selected and this is a destination click
-    if(selSq && vmoves.includes(sq)){
-      execMove(selSq, sq);
-      return;
-    }
+  const canvas=_t3?.renderer?.domElement;
+  if(!canvas)return;
+  canvas.addEventListener('mousedown',e=>{if(e.button!==0)return;e.preventDefault();onPointerDown(e.clientX,e.clientY);});
+  document.addEventListener('mousemove',e=>{onPointerMove(e.clientX,e.clientY);});
+  document.addEventListener('mouseup',e=>{if(e.button!==0)return;onPointerUp(e.clientX,e.clientY);});
+  canvas.addEventListener('touchstart',e=>{e.preventDefault();const t=e.touches[0];onPointerDown(t.clientX,t.clientY);},{passive:false});
+  document.addEventListener('touchmove',e=>{if(!iState.down)return;e.preventDefault();const t=e.touches[0];onPointerMove(t.clientX,t.clientY);},{passive:false});
+  document.addEventListener('touchend',e=>{if(!iState.down)return;const t=e.changedTouches[0];onPointerUp(t.clientX,t.clientY);});
+  canvas.addEventListener('click',e=>{
+    if(iState.down||iState.dragging)return;
+    const sq=getSqFromPoint(e.clientX,e.clientY);
+    if(!sq)return;
+    if(selSq&&vmoves.includes(sq)){execMove(selSq,sq);return;}
     handleClick(sq);
   });
 }
 
-// Legacy stubs (kept for compatibility, now unused internally)
+// Legacy stubs
 function onPieceMouseDown(){}
 function onPieceTouchStart(){}
-function clickSq(sq){ handleClick(sq); }
+function clickSq(sq){handleClick(sq);}
 function highlightDragTarget(){}
-function killGhostLegacy(){ killGhost(); }
-
-// Moved to utility:
-function moveGhostLegacy(x,y){ moveGhost(x,y); }
-function sqFromPoint(x,y){ return getSqFromPoint(x,y); }
+function killGhostLegacy(){killGhost();}
+function moveGhostLegacy(x,y){}
+function sqFromPoint(x,y){return getSqFromPoint(x,y);}
 
 function execMove(from,to){
   const piece=game.get(from);
