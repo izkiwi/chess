@@ -13,17 +13,17 @@
   <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
   <style>
     :root {
-      --bg: #080a0e;
-      --surface: #111318;
-      --surface2: #191c24;
-      --border: #252835;
-      --gold: #c9a84c;
-      --gold-dim: #7a6530;
-      --gold-glow: rgba(201, 168, 76, 0.15);
-      --text: #ddd8cc;
-      --text-dim: #686676;
-      --light-sq: #f0d9b5;
-      --dark-sq: #b58863;
+      --bg: #1a1d22;
+      --surface: #272b34;
+      --surface2: #2e3440;
+      --border: #3a4050;
+      --gold: #5d9b4a;
+      --gold-dim: #3d6e30;
+      --gold-glow: rgba(93, 155, 74, 0.15);
+      --text: #e8e8e8;
+      --text-dim: #7a8090;
+      --light-sq: #eeeed2;
+      --dark-sq: #769656;
       --fn: 'Cinzel', serif;
       --fb: 'Crimson Pro', serif;
       --fm: 'Share Tech Mono', monospace;
@@ -54,8 +54,8 @@
       content: '';
       position: fixed;
       inset: 0;
-      background: radial-gradient(ellipse 60% 40% at 15% 60%, rgba(201, 168, 76, .04) 0%, transparent 70%),
-        radial-gradient(ellipse 40% 60% at 85% 20%, rgba(201, 168, 76, .03) 0%, transparent 70%);
+      background: radial-gradient(ellipse 60% 40% at 15% 60%, rgba(93, 155, 74, .04) 0%, transparent 70%),
+        radial-gradient(ellipse 40% 60% at 85% 20%, rgba(93, 155, 74, .03) 0%, transparent 70%);
       pointer-events: none;
       z-index: 0
     }
@@ -91,7 +91,7 @@
       font-size: 1.1rem;
       letter-spacing: .18em;
       color: var(--gold);
-      text-shadow: 0 0 30px rgba(201, 168, 76, .25)
+      text-shadow: 0 0 30px rgba(93, 155, 74, .25)
     }
 
     .logo small {
@@ -132,13 +132,13 @@
     .btn-g {
       border-color: var(--gold);
       color: var(--gold);
-      background: rgba(201,168,76,.08)
+      background: rgba(93,155,74,.08)
     }
 
     .btn-g:hover {
       background: var(--gold);
       color: var(--bg);
-      box-shadow: 0 4px 14px rgba(201,168,76,.3)
+      box-shadow: 0 4px 14px rgba(93,155,74,.3)
     }
 
     .btn-s {
@@ -205,7 +205,7 @@
     .ctrl-btn:hover {
       border-color: var(--gold-dim);
       color: var(--text);
-      background: rgba(201,168,76,.07)
+      background: rgba(93,155,74,.07)
     }
 
     .ctrl-btn.danger:hover {
@@ -288,7 +288,7 @@
     }
 
     .info-note {
-      background: rgba(201, 168, 76, .07);
+      background: rgba(93, 155, 74, .07);
       border-left: 2px solid var(--gold-dim);
       padding: .65rem .9rem;
       font-size: .78rem;
@@ -345,7 +345,7 @@
       font-weight: 900;
       letter-spacing: .2em;
       color: var(--gold);
-      text-shadow: 0 0 50px rgba(201, 168, 76, .3)
+      text-shadow: 0 0 50px rgba(93, 155, 74, .3)
     }
 
     .setup-logo p {
@@ -395,8 +395,8 @@
       position: relative;
       width: min(380px, 78vw);
       height: min(380px, 78vw);
-      border: 2px solid rgba(201, 168, 76, .4);
-      box-shadow: 0 0 60px rgba(201, 168, 76, .2), 0 0 120px rgba(201, 168, 76, .08);
+      border: 2px solid rgba(93, 155, 74, .4);
+      box-shadow: 0 0 60px rgba(93, 155, 74, .2), 0 0 120px rgba(93, 155, 74, .08);
       overflow: hidden;
       flex-shrink: 0
     }
@@ -418,7 +418,7 @@
     .lm-board-scan {
       position: absolute;
       inset: 0;
-      background: repeating-linear-gradient(0deg, transparent, transparent 3px, rgba(201, 168, 76, .015) 3px, rgba(201, 168, 76, .015) 4px);
+      background: repeating-linear-gradient(0deg, transparent, transparent 3px, rgba(93, 155, 74, .015) 3px, rgba(93, 155, 74, .015) 4px);
       pointer-events: none
     }
 
@@ -433,7 +433,7 @@
       font-weight: 900;
       letter-spacing: .22em;
       color: var(--gold);
-      text-shadow: 0 0 50px rgba(201, 168, 76, .6), 0 2px 12px rgba(0, 0, 0, .8);
+      text-shadow: 0 0 50px rgba(93, 155, 74, .6), 0 2px 12px rgba(0, 0, 0, .8);
       text-transform: uppercase
     }
 
@@ -441,7 +441,7 @@
       font-family: var(--fm);
       font-size: clamp(.5rem, 1.5vw, .62rem);
       letter-spacing: .45em;
-      color: rgba(201, 168, 76, .65);
+      color: rgba(93, 155, 74, .65);
       margin-top: .25rem
     }
 
@@ -460,7 +460,7 @@
       letter-spacing: .32em;
       color: var(--gold);
       text-transform: uppercase;
-      text-shadow: 0 0 30px rgba(201, 168, 76, .5)
+      text-shadow: 0 0 30px rgba(93, 155, 74, .5)
     }
 
     .lm-vs {
@@ -616,7 +616,7 @@
       font-weight: 900;
       letter-spacing: .18em;
       color: var(--gold);
-      text-shadow: 0 0 20px rgba(201,168,76,.3)
+      text-shadow: 0 0 20px rgba(93,155,74,.3)
     }
 
     .sidebar-badges {
@@ -632,8 +632,8 @@
       letter-spacing: .1em;
       padding: .18rem .5rem;
       border-radius: 3px;
-      background: rgba(201,168,76,.1);
-      border: 1px solid rgba(201,168,76,.2);
+      background: rgba(93,155,74,.1);
+      border: 1px solid rgba(93,155,74,.2);
       color: var(--gold-dim)
     }
 
@@ -666,12 +666,12 @@
     }
 
     .snav-item:hover {
-      background: rgba(201,168,76,.07);
+      background: rgba(93,155,74,.07);
       color: var(--text)
     }
 
     .snav-item.active {
-      background: rgba(201,168,76,.12);
+      background: rgba(93,155,74,.12);
       color: var(--gold)
     }
 
@@ -704,7 +704,7 @@
       border: 1px solid var(--gold-dim);
       border-radius: 7px;
       cursor: pointer;
-      background: rgba(201,168,76,.08);
+      background: rgba(93,155,74,.08);
       color: var(--gold);
       transition: all .18s
     }
@@ -805,7 +805,7 @@
       font-family: var(--fm);
       font-size: .62rem;
       font-weight: 700;
-      color: rgba(201, 168, 76, .7);
+      color: rgba(93, 155, 74, .7);
       text-align: right;
       line-height: 1
     }
@@ -822,7 +822,7 @@
       font-family: var(--fm);
       font-size: .62rem;
       font-weight: 700;
-      color: rgba(201, 168, 76, .7);
+      color: rgba(93, 155, 74, .7);
       text-align: center;
       flex: 1
     }
@@ -843,8 +843,8 @@
       grid-template-rows: repeat(8, 1fr);
       width: 100%;
       height: 100%;
-      border: 2px solid #8b5a2b;
-      box-shadow: 0 0 0 1px #5c3317, 0 8px 40px rgba(0, 0, 0, .85)
+      border: 2px solid #4d6b38;
+      box-shadow: 0 0 0 1px #3a5228, 0 8px 40px rgba(0, 0, 0, .85)
     }
 
     .sq {
@@ -859,19 +859,11 @@
     }
 
     .sq.lt {
-      background:
-        repeating-linear-gradient(87deg, rgba(160, 100, 30, .06) 0, transparent 1px, transparent 3px, rgba(200, 140, 60, .04) 3px, transparent 5px, transparent 9px, rgba(140, 85, 20, .055) 9px, transparent 11px, transparent 16px, rgba(180, 115, 40, .035) 16px, transparent 18px),
-        repeating-linear-gradient(93deg, rgba(255, 220, 140, .045) 0, transparent 2px, transparent 6px, rgba(0, 0, 0, .018) 6px, transparent 9px, transparent 14px, rgba(220, 170, 80, .03) 14px, transparent 17px),
-        radial-gradient(ellipse 140% 80% at 30% 40%, rgba(255, 235, 180, .18) 0%, transparent 60%),
-        linear-gradient(158deg, #f5e0bc 0%, #eecf9e 18%, #f4dcb8 36%, #e9c88d 55%, #f2d9b3 74%, #edd1a4 100%);
+      background: #eeeed2;
     }
 
     .sq.dk {
-      background:
-        repeating-linear-gradient(87deg, rgba(30, 10, 2, .13) 0, transparent 1px, transparent 3px, rgba(60, 22, 5, .09) 3px, transparent 5px, transparent 8px, rgba(20, 7, 1, .10) 8px, transparent 10px, transparent 14px, rgba(70, 28, 6, .07) 14px, transparent 16px),
-        repeating-linear-gradient(93deg, rgba(160, 80, 20, .055) 0, transparent 2px, transparent 7px, rgba(0, 0, 0, .05) 7px, transparent 10px, transparent 15px, rgba(130, 60, 15, .04) 15px, transparent 18px),
-        radial-gradient(ellipse 130% 90% at 25% 35%, rgba(200, 130, 60, .18) 0%, transparent 55%),
-        linear-gradient(155deg, #c09060 0%, #a87848 20%, #be8e5e 40%, #a47244 62%, #bc8c5c 80%, #a87040 100%);
+      background: #769656;
     }
 
     /* Selected piece square - gold tint */
@@ -908,11 +900,11 @@
 
     /* Last move highlight */
     .sq.lf {
-      background: rgba(155, 199, 0, .42) !important
+      background: rgba(200, 210, 60, .52) !important
     }
 
     .sq.lt2 {
-      background: rgba(155, 199, 0, .52) !important
+      background: rgba(200, 210, 60, .65) !important
     }
 
     /* Check */
@@ -1088,7 +1080,7 @@
     }
 
     .mpair:hover {
-      background: rgba(201,168,76,.04)
+      background: rgba(93,155,74,.04)
     }
 
     .mnum {
@@ -1107,12 +1099,12 @@
 
     .mw:hover,
     .mb:hover {
-      background: rgba(201, 168, 76, .14)
+      background: rgba(93, 155, 74, .14)
     }
 
     .mw.active,
     .mb.active {
-      background: rgba(201,168,76,.22);
+      background: rgba(93,155,74,.22);
       color: var(--gold)
     }
 
@@ -1347,8 +1339,8 @@
       text-align: center;
       margin-top: .5rem;
       padding: .45rem;
-      background: rgba(201, 168, 76, .06);
-      border: 1px solid rgba(201, 168, 76, .15);
+      background: rgba(93, 155, 74, .06);
+      border: 1px solid rgba(93, 155, 74, .15);
       border-radius: 6px
     }
 
@@ -1359,8 +1351,8 @@
       gap: .6rem;
       margin-top: .5rem;
       padding: .8rem;
-      background: rgba(201, 168, 76, .07);
-      border: 1px solid rgba(201, 168, 76, .2);
+      background: rgba(93, 155, 74, .07);
+      border: 1px solid rgba(93, 155, 74, .2);
       border-radius: 8px
     }
 
@@ -1637,8 +1629,8 @@
     .clock.active {
       border-color: var(--gold);
       color: var(--gold);
-      background: rgba(201, 168, 76, .08);
-      box-shadow: 0 0 10px rgba(201, 168, 76, .15)
+      background: rgba(93, 155, 74, .08);
+      box-shadow: 0 0 10px rgba(93, 155, 74, .15)
     }
 
     .clock.low {
@@ -1662,6 +1654,170 @@
     .clock.inactive {
       color: var(--text-dim);
       border-color: var(--border)
+    }
+
+    /* ═══════════════ RESULT OVERLAY ═══════════════ */
+    .result-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,.72);
+      z-index: 800;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      animation: result-bg-in .3s ease
+    }
+
+    @keyframes result-bg-in {
+      from { opacity: 0 }
+      to   { opacity: 1 }
+    }
+
+    .result-card {
+      position: relative;
+      background: #1e2229;
+      border: 1px solid rgba(255,255,255,.08);
+      border-radius: 14px;
+      padding: 2.2rem 2.4rem 1.8rem;
+      text-align: center;
+      width: min(380px, 90vw);
+      box-shadow: 0 24px 80px rgba(0,0,0,.7), 0 0 0 1px rgba(255,255,255,.05);
+      animation: result-card-in .32s cubic-bezier(.34,1.56,.64,1)
+    }
+
+    @keyframes result-card-in {
+      from { transform: scale(.82) translateY(20px); opacity: 0 }
+      to   { transform: scale(1)   translateY(0);    opacity: 1 }
+    }
+
+    .result-close {
+      position: absolute;
+      top: .7rem;
+      right: .9rem;
+      background: transparent;
+      border: none;
+      color: var(--text-dim);
+      font-size: 1rem;
+      cursor: pointer;
+      line-height: 1;
+      padding: .3rem .4rem;
+      border-radius: 4px;
+      transition: color .15s, background .15s
+    }
+
+    .result-close:hover {
+      color: var(--text);
+      background: rgba(255,255,255,.07)
+    }
+
+    .result-icon {
+      font-size: 3.2rem;
+      margin-bottom: .6rem;
+      line-height: 1
+    }
+
+    .result-title {
+      font-family: var(--fn);
+      font-size: 1.55rem;
+      font-weight: 900;
+      letter-spacing: .06em;
+      margin-bottom: .35rem
+    }
+
+    .result-title.win  { color: #5d9b4a }
+    .result-title.lose { color: #e05555 }
+    .result-title.draw { color: #c9c04a }
+
+    .result-sub {
+      font-family: var(--fm);
+      font-size: .72rem;
+      letter-spacing: .1em;
+      color: var(--text-dim);
+      margin-bottom: 1.2rem
+    }
+
+    .result-divider {
+      height: 1px;
+      background: rgba(255,255,255,.07);
+      margin: 0 0 1.2rem
+    }
+
+    .result-btns {
+      display: flex;
+      flex-direction: column;
+      gap: .6rem
+    }
+
+    .result-btn-primary {
+      width: 100%;
+      padding: .75rem;
+      font-family: var(--fn);
+      font-size: .72rem;
+      font-weight: 700;
+      letter-spacing: .14em;
+      text-transform: uppercase;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: filter .18s, transform .12s;
+      color: #fff
+    }
+
+    .result-btn-primary:hover {
+      filter: brightness(1.12);
+      transform: translateY(-1px)
+    }
+
+    .result-btn-row {
+      display: flex;
+      gap: .5rem
+    }
+
+    .result-btn-secondary {
+      flex: 1;
+      padding: .55rem .5rem;
+      font-family: var(--fn);
+      font-size: .6rem;
+      font-weight: 600;
+      letter-spacing: .1em;
+      text-transform: uppercase;
+      background: rgba(255,255,255,.06);
+      border: 1px solid rgba(255,255,255,.1);
+      border-radius: 7px;
+      color: var(--text-dim);
+      cursor: pointer;
+      transition: all .18s
+    }
+
+    .result-btn-secondary:hover {
+      background: rgba(255,255,255,.11);
+      color: var(--text);
+      border-color: rgba(255,255,255,.2)
+    }
+
+    /* ═══════════════ CHECK BANNER ═══════════════ */
+    .check-banner {
+      position: fixed;
+      top: 4.5rem;
+      left: 50%;
+      transform: translateX(-50%);
+      background: rgba(220,60,60,.92);
+      color: #fff;
+      font-family: var(--fn);
+      font-size: .7rem;
+      font-weight: 700;
+      letter-spacing: .18em;
+      text-transform: uppercase;
+      padding: .55rem 1.4rem;
+      border-radius: 6px;
+      z-index: 700;
+      box-shadow: 0 4px 20px rgba(220,60,60,.45);
+      animation: check-banner-in .22s ease
+    }
+
+    @keyframes check-banner-in {
+      from { opacity: 0; transform: translateX(-50%) translateY(-8px) }
+      to   { opacity: 1; transform: translateX(-50%) translateY(0) }
     }
   </style>
 </head>
@@ -2777,8 +2933,8 @@
         const wm = hist[i];
         const bm = hist[i + 1];
         const lastIdx = hist.length - 1;
-        const wHL = (i === lastIdx) ? 'style="background:rgba(201,168,76,.15);border-radius:2px"' : '';
-        const bHL = (i + 1 === lastIdx) ? 'style="background:rgba(201,168,76,.15);border-radius:2px"' : '';
+        const wHL = (i === lastIdx) ? 'style="background:rgba(93,155,74,.15);border-radius:2px"' : '';
+        const bHL = (i + 1 === lastIdx) ? 'style="background:rgba(93,155,74,.15);border-radius:2px"' : '';
         const ann = m => {
           if (!m) return '';
           let s = m.san;
