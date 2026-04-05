@@ -1616,6 +1616,7 @@
         <!-- My bar -->
         <div class="pbar" style="border-top:none">
           <div style="display:flex;align-items:center;gap:.5rem">
+            <div id="my-dot" class="pdot" style="background:#f0f0f0"></div>
             <div class="pavatar" id="my-avatar" style="border-color:var(--gold);color:var(--gold)">♙</div>
             <div>
               <div id="my-name" class="pname">You</div>
@@ -2953,30 +2954,35 @@ client.login(BOT_TOKEN);
       const ts = Date.now();
 
       if (useFirebase && db) {
-        db.ref('games/' + roomId).once('value').then(snap => {
-          const data = snap.val();
-          if (!data) {
-            // Room doesn't exist yet — create it with this player's slot
-            const newData = {
-              id: roomId, pgn: '', status: 'waiting',
-              white: color === 'w' ? { name: pName } : null,
-              black: color === 'b' ? { name: pName } : null,
-              turn: 'w', tc: 0, created: ts, hook: null, chat: []
-            };
-            db.ref('games/' + roomId).set(newData).then(() => {
-              initGame(newData); setupFbListener();
-            }).catch(e => { toast('Firebase error: ' + e.message + ' — try entering Room ID manually'); document.getElementById('join-id').value = roomId; });
-          } else {
-            // Room exists — update our colour slot then enter
-            const upd = {};
-            if (color === 'w') upd.white = { name: pName }; else upd.black = { name: pName };
-            const bothPresent = (color === 'w' ? data.black : data.white) != null;
-            upd.status = bothPresent ? 'active' : 'waiting';
-            db.ref('games/' + roomId).update(upd).then(() => {
-              initGame({ ...data, ...upd }); setupFbListener();
-            });
-          }
-        });
+        // Use update (not set) so both players can write simultaneously
+        // without overwriting each other's slot.
+        const mySlot = {};
+        mySlot[color === 'w' ? 'white' : 'black'] = { name: pName };
+        const baseFields = { id: roomId, pgn: '', turn: 'w', tc: 0, created: ts, hook: null };
+
+        db.ref('games/' + roomId).update({ ...baseFields, ...mySlot })
+          .then(() => db.ref('games/' + roomId).once('value'))
+          .then(snap => {
+            const data = snap.val();
+            if (!data) throw new Error('Room data missing after write');
+            const bothPresent = data.white != null && data.black != null;
+            const status = bothPresent ? 'active' : 'waiting';
+            // Only update status if it needs to change
+            if (data.status !== status) {
+              return db.ref('games/' + roomId).update({ status })
+                .then(() => ({ ...data, status }));
+            }
+            return { ...data, status };
+          })
+          .then(finalData => {
+            initGame(finalData);
+            setupFbListener();
+          })
+          .catch(e => {
+            console.error('[autoJoin]', e);
+            toast('Connection error: ' + e.message);
+          });
+
       } else {
         // Local mode fallback
         if (!localGames[roomId]) {
