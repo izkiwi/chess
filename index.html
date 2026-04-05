@@ -136,7 +136,20 @@ input[type=checkbox]{width:auto;margin:0;padding:0;cursor:pointer;accent-color:v
 .board-wrap{position:relative;height:100%;aspect-ratio:1/1;flex-shrink:0;max-height:clamp(380px,calc(100vh - 200px),660px);max-width:clamp(380px,calc(100vh - 200px),660px)}
 .board{display:grid;grid-template-columns:repeat(8,1fr);grid-template-rows:repeat(8,1fr);width:100%;height:100%;border:2px solid #8b5a2b;box-shadow:0 0 0 1px #5c3317,0 8px 40px rgba(0,0,0,.85)}
 .sq{display:flex;align-items:center;justify-content:center;cursor:pointer;position:relative;transition:filter .08s;user-select:none;-webkit-user-select:none}
-.sq.lt{background:#f0d9b5}.sq.dk{background:#b58863}
+.sq.lt{
+  background:
+    repeating-linear-gradient(87deg,rgba(160,100,30,.06) 0,transparent 1px,transparent 3px,rgba(200,140,60,.04) 3px,transparent 5px,transparent 9px,rgba(140,85,20,.055) 9px,transparent 11px,transparent 16px,rgba(180,115,40,.035) 16px,transparent 18px),
+    repeating-linear-gradient(93deg,rgba(255,220,140,.045) 0,transparent 2px,transparent 6px,rgba(0,0,0,.018) 6px,transparent 9px,transparent 14px,rgba(220,170,80,.03) 14px,transparent 17px),
+    radial-gradient(ellipse 140% 80% at 30% 40%,rgba(255,235,180,.18) 0%,transparent 60%),
+    linear-gradient(158deg,#f5e0bc 0%,#eecf9e 18%,#f4dcb8 36%,#e9c88d 55%,#f2d9b3 74%,#edd1a4 100%);
+}
+.sq.dk{
+  background:
+    repeating-linear-gradient(87deg,rgba(30,10,2,.13) 0,transparent 1px,transparent 3px,rgba(60,22,5,.09) 3px,transparent 5px,transparent 8px,rgba(20,7,1,.10) 8px,transparent 10px,transparent 14px,rgba(70,28,6,.07) 14px,transparent 16px),
+    repeating-linear-gradient(93deg,rgba(160,80,20,.055) 0,transparent 2px,transparent 7px,rgba(0,0,0,.05) 7px,transparent 10px,transparent 15px,rgba(130,60,15,.04) 15px,transparent 18px),
+    radial-gradient(ellipse 130% 90% at 25% 35%,rgba(200,130,60,.18) 0%,transparent 55%),
+    linear-gradient(155deg,#c09060 0%,#a87848 20%,#be8e5e 40%,#a47244 62%,#bc8c5c 80%,#a87040 100%);
+}
 
 /* Selected piece square - gold tint */
 .sq.sel{outline:3px solid rgba(255,220,0,.85)!important;outline-offset:-3px;z-index:3}
@@ -230,6 +243,20 @@ input[type=checkbox]{width:auto;margin:0;padding:0;cursor:pointer;accent-color:v
 .toast{position:fixed;bottom:1.25rem;right:1.25rem;background:var(--surface);border:1px solid var(--gold-dim);padding:.65rem 1.1rem;font-family:var(--fm);font-size:.75rem;color:var(--text);z-index:999;animation:slide-in .25s ease;max-width:280px;line-height:1.4}
 @keyframes slide-in{from{transform:translateX(110%);opacity:0}to{transform:translateX(0);opacity:1}}
 
+/* REMATCH STYLES */
+.rematch-pending{font-family:var(--fm);font-size:.68rem;letter-spacing:.12em;color:var(--text-dim);text-align:center;margin-top:.5rem;padding:.45rem;background:rgba(201,168,76,.06);border:1px solid rgba(201,168,76,.15);border-radius:6px}
+.rematch-request-panel{display:flex;flex-direction:column;align-items:center;gap:.6rem;margin-top:.5rem;padding:.8rem;background:rgba(201,168,76,.07);border:1px solid rgba(201,168,76,.2);border-radius:8px}
+.rematch-request-title{font-family:var(--fn);font-size:.7rem;letter-spacing:.18em;color:var(--gold);text-transform:uppercase}
+.rematch-btn-row{display:flex;gap:.5rem;width:100%}
+.rematch-accept{flex:1;padding:.55rem;font-family:var(--fn);font-size:.65rem;letter-spacing:.12em;background:linear-gradient(135deg,#3a7a3a,#256025);border:none;color:#fff;border-radius:7px;cursor:pointer;text-transform:uppercase;transition:all .18s}
+.rematch-accept:hover{filter:brightness(1.15)}
+.rematch-decline{flex:1;padding:.55rem;font-family:var(--fn);font-size:.65rem;letter-spacing:.12em;background:rgba(150,40,40,.6);border:1px solid rgba(220,80,80,.3);color:#f88;border-radius:7px;cursor:pointer;text-transform:uppercase;transition:all .18s}
+.rematch-decline:hover{background:rgba(180,50,50,.7);color:#fff}
+
+/* CHECK HINT — highlight squares of pieces that can still move */
+.sq.can-move-hint::before{content:'';position:absolute;inset:0;background:radial-gradient(circle at center,rgba(255,200,0,.28) 0%,rgba(255,200,0,.06) 70%,transparent 100%);pointer-events:none;z-index:2;border-radius:1px}
+.sq.can-move-hint{outline:2px solid rgba(255,200,0,.45)!important;outline-offset:-2px;z-index:2}
+
 /* DISCORD CODE */
 .dcode{background:#12141f;border:1px solid #333;padding:.9rem;font-family:var(--fm);font-size:.68rem;color:#9fc5e8;overflow-x:auto;margin:.4rem 0 1rem;white-space:pre;line-height:1.5;border-radius:2px}
 
@@ -261,9 +288,58 @@ input[type=checkbox]{width:auto;margin:0;padding:0;cursor:pointer;accent-color:v
 /* Each theme defines its own light/dark colours; grain overlays are universal */
 
 /* ── 1. Classic Maple (chess.com signature look) ── */
-.theme-classic .sq.lt{background:#f0d9b5}
-.theme-classic .sq.dk{background:#b58863}
-.theme-classic .board{border-color:#8b5a2b;box-shadow:0 0 0 1px #5c3317,0 8px 40px rgba(0,0,0,.85)}
+.theme-classic .sq.lt{
+  background:
+    repeating-linear-gradient(
+      87deg,
+      rgba(160,100,30,.06)  0, transparent 1px,
+      transparent 3px,
+      rgba(200,140,60,.04)  3px, transparent 5px,
+      transparent 9px,
+      rgba(140,85,20,.055)  9px, transparent 11px,
+      transparent 16px,
+      rgba(180,115,40,.035) 16px, transparent 18px
+    ),
+    repeating-linear-gradient(
+      93deg,
+      rgba(255,220,140,.045) 0, transparent 2px,
+      transparent 6px,
+      rgba(0,0,0,.018)       6px, transparent 9px,
+      transparent 14px,
+      rgba(220,170,80,.03)  14px, transparent 17px
+    ),
+    radial-gradient(ellipse 140% 80% at 30% 40%, rgba(255,235,180,.18) 0%, transparent 60%),
+    radial-gradient(ellipse 100% 120% at 70% 70%, rgba(210,160,80,.10) 0%, transparent 55%),
+    linear-gradient(158deg,#f5e0bc 0%,#eecf9e 18%,#f4dcb8 36%,#e9c88d 55%,#f2d9b3 74%,#edd1a4 100%);
+}
+.theme-classic .sq.dk{
+  background:
+    repeating-linear-gradient(
+      87deg,
+      rgba(30,10,2,.13)  0, transparent 1px,
+      transparent 3px,
+      rgba(60,22,5,.09)  3px, transparent 5px,
+      transparent 8px,
+      rgba(20,7,1,.10)   8px, transparent 10px,
+      transparent 14px,
+      rgba(70,28,6,.07) 14px, transparent 16px
+    ),
+    repeating-linear-gradient(
+      93deg,
+      rgba(160,80,20,.055) 0, transparent 2px,
+      transparent 7px,
+      rgba(0,0,0,.05)      7px, transparent 10px,
+      transparent 15px,
+      rgba(130,60,15,.04) 15px, transparent 18px
+    ),
+    radial-gradient(ellipse 130% 90% at 25% 35%, rgba(200,130,60,.18) 0%, transparent 55%),
+    radial-gradient(ellipse 110% 110% at 75% 65%, rgba(100,45,10,.22) 0%, transparent 50%),
+    linear-gradient(155deg,#c09060 0%,#a87848 20%,#be8e5e 40%,#a47244 62%,#bc8c5c 80%,#a87040 100%);
+}
+.theme-classic .board{
+  border-color:#8b5a2b;
+  box-shadow:0 0 0 1px #5c3317,0 0 0 5px #7a4a20,0 0 0 6px #4a2c0e,0 8px 40px rgba(0,0,0,.85),inset 0 0 0 1px rgba(255,220,150,.08);
+}
 
 /* ── 2. Dark Walnut ── */
 .theme-ocean .sq.lt{
@@ -883,6 +959,7 @@ function initGame(data){
 function renderBoard(){
   const el=document.getElementById('board');
   el.innerHTML='';
+  // Clear any lingering check hints (re-drawn fresh)
   const bd=game.board();
   const kingSq=game.in_check()?findKing(game.turn()):null;
   for(let r=0;r<8;r++)for(let f=0;f<8;f++){
@@ -1177,7 +1254,7 @@ function doMove(from,to,promo){
     showMateOverlay(null, 'The game ended in a draw');
   }else{
     upd.status='active';
-    if(game.in_check()){showCheckBanner();}
+    if(game.in_check()){showCheckBanner();showCheckHint();}
     if(document.getElementById('notify-moves').checked)sendHook(`♟ \`${gid}\` — Move: **${mv.san}**`);
     switchClockTurn();
   }
@@ -1195,6 +1272,24 @@ function showCheckBanner(){
   setTimeout(()=>b.remove(),2500);
 }
 
+// ── Show which pieces can move when in check ──────────────────────
+function showCheckHint(){
+  // Only highlight when it's our turn and we're in check
+  if(!game.in_check())return;
+  if(game.turn()!==pColor)return;
+  // Get all squares that have our pieces with at least one legal move
+  const moves=game.moves({verbose:true});
+  const movableSquares=new Set(moves.map(m=>m.from));
+  movableSquares.forEach(sq=>{
+    const el=document.querySelector(`[data-sq="${sq}"]`);
+    if(el)el.classList.add('can-move-hint');
+  });
+  // Auto-remove after 3.5 seconds
+  setTimeout(()=>{
+    document.querySelectorAll('.sq.can-move-hint').forEach(e=>e.classList.remove('can-move-hint'));
+  },3500);
+}
+
 function showMateOverlay(winner, reason){
   document.querySelectorAll('.result-overlay').forEach(e=>e.remove());
 
@@ -1202,20 +1297,38 @@ function showMateOverlay(winner, reason){
   const overlay = document.createElement('div');
   overlay.className = 'result-overlay';
 
-  let icon, titleClass, titleText, subText;
+  // Get actual player names for display
+  const myNameEl = document.getElementById('my-name');
+  const oppNameEl = document.getElementById('opp-name');
+  const myDisplayName = (myNameEl ? myNameEl.textContent.replace(' (You)','') : pName) || pName;
+  const oppDisplayName = (oppNameEl ? oppNameEl.textContent : 'Opponent') || 'Opponent';
+
+  let icon, titleClass, titleText, subText, winnerName, loserName;
   if(winner === null){
     icon = '🤝'; titleClass = 'draw'; titleText = 'Draw!';
     subText = reason || 'The game ended in a draw';
   } else {
     const won = winner==='White' ? pColor==='w' : pColor==='b';
+    winnerName = won ? myDisplayName : oppDisplayName;
+    loserName  = won ? oppDisplayName : myDisplayName;
     if(won){
-      icon = '🏆'; titleClass = 'win'; titleText = 'You Won!';
+      icon = '🏆'; titleClass = 'win'; titleText = `${winnerName} Won!`;
       subText = reason || 'by checkmate';
     } else {
-      icon = '💀'; titleClass = 'lose'; titleText = 'You Lost';
+      icon = '💀'; titleClass = 'lose'; titleText = `${loserName} Lost`;
       subText = reason || 'Better luck next time!';
     }
   }
+
+  // Rematch button: only show if opponent is present (Firebase game)
+  const canRematch = useFirebase && db && gid;
+  const rematchBtnHtml = canRematch
+    ? `<button class="result-btn-primary" id="rematch-btn" onclick="requestRematch(this)" style="background:linear-gradient(135deg,#5a8a3a,#3a6020)">
+         ⚔ Rematch
+       </button>`
+    : `<button class="result-btn-primary" onclick="this.closest('.result-overlay').remove();show('lobby')">
+         ♟ New Game
+       </button>`;
 
   overlay.innerHTML = `
     <div class="result-card" data-theme="${theme}">
@@ -1225,15 +1338,17 @@ function showMateOverlay(winner, reason){
       <div class="result-sub">${subText}</div>
       <div class="result-divider"></div>
       <div class="result-btns">
-        <button class="result-btn-primary" onclick="this.closest('.result-overlay').remove();show('lobby')">
-          ♟ New Game
-        </button>
+        ${rematchBtnHtml}
+        <div id="rematch-status-area"></div>
         <div class="result-btn-row">
           <button class="result-btn-secondary" onclick="this.closest('.result-overlay').remove()">
             Keep Board
           </button>
           <button class="result-btn-secondary" onclick="copyPGN();this.closest('.result-overlay').remove()">
             📋 Export PGN
+          </button>
+          <button class="result-btn-secondary" onclick="this.closest('.result-overlay').remove();show('lobby')">
+            🏠 Lobby
           </button>
         </div>
       </div>
@@ -1256,7 +1371,7 @@ function setupFbListener(){
       const g2=new Chess();try{g2.load_pgn(data.pgn)}catch(e){}
       game=g2;
       if(data.lastMove)lastMv={from:data.lastMove.from,to:data.lastMove.to};
-      if(game.in_check()){showCheckBanner();}
+      if(game.in_check()){showCheckBanner();showCheckHint();}
       switchClockTurn();
       renderBoard();updateStatus();renderHistory();updateCaps();updateClocks();
     }
@@ -1278,12 +1393,138 @@ function setupFbListener(){
         showMateOverlay(null,'The game ended in a draw');
       }
     }
+    // ── REMATCH HANDLING ──
+    if(data.rematch){
+      const rm=data.rematch;
+      // Opponent requested rematch (not us)
+      if(rm.status==='pending'&&rm.from!==pColor){
+        showRematchRequestPanel();
+      }
+      // Opponent accepted our rematch request
+      if(rm.status==='accepted'&&rm.from===pColor){
+        // We were the requester, so we start the new game
+        startRematch(data);
+      }
+      // Opponent started a new game after accepting (responder side)
+      if(rm.status==='started'&&rm.newGameId&&rm.from!==pColor){
+        // Join the new game as the other color
+        const newGid=rm.newGameId;
+        const newPColor=pColor==='w'?'b':'w';
+        db.ref('games/'+newGid).once('value').then(s=>{
+          const nd=s.val();if(!nd)return;
+          const upd={};
+          if(newPColor==='w')upd.white={name:pName};else upd.black={name:pName};
+          upd.status='active';
+          db.ref('games/'+newGid).update(upd).then(()=>{
+            pColor=newPColor;gid=newGid;
+            document.querySelectorAll('.result-overlay').forEach(e=>e.remove());
+            document.querySelectorAll('.rematch-float-panel').forEach(e=>e.remove());
+            initGame({...nd,...upd});setupFbListener();
+            toast('Rematch started! Colors swapped.');
+          });
+        });
+      }
+      // Declined
+      if(rm.status==='declined'&&rm.from===pColor){
+        toast('Opponent declined the rematch.');
+        const btn=document.getElementById('rematch-btn');
+        if(btn){btn.disabled=false;btn.textContent='⚔ Rematch';}
+        const sa=document.getElementById('rematch-status-area');
+        if(sa)sa.innerHTML='';
+      }
+    }
   });
 }
 
 function setupChatListener(){
   if(!useFirebase||!db)return;
   db.ref('games/'+gid+'/chat').on('child_added',snap=>{const m=snap.val();if(m)chatAdd(m.user,m.text,m.sys)});
+}
+
+// ══════════════════════════════════════════════
+// REMATCH LOGIC
+// ══════════════════════════════════════════════
+function requestRematch(btn){
+  if(!useFirebase||!db||!gid)return;
+  // Disable button
+  if(btn){btn.disabled=true;btn.textContent='⏳ Waiting for opponent…'}
+  const statusArea=document.getElementById('rematch-status-area');
+  if(statusArea){statusArea.innerHTML='<div class="rematch-pending">Rematch request sent — waiting for opponent…</div>'}
+  db.ref('games/'+gid+'/rematch').set({from:pColor,status:'pending',ts:Date.now()});
+}
+
+function acceptRematch(){
+  if(!useFirebase||!db||!gid)return;
+  db.ref('games/'+gid+'/rematch').update({status:'accepted',acceptedAt:Date.now()});
+}
+
+function declineRematch(){
+  if(!useFirebase||!db||!gid)return;
+  db.ref('games/'+gid+'/rematch').update({status:'declined'});
+  // Hide the panel
+  document.querySelectorAll('.rematch-request-panel').forEach(e=>e.remove());
+  toast('Rematch declined.');
+}
+
+function startRematch(data){
+  // Swap colors from the old game
+  const newPColor = pColor==='w' ? 'b' : 'w';
+  const oldWhiteName = data.white?.name||'?';
+  const oldBlackName = data.black?.name||'?';
+  const newGid = genId();
+  const newData={
+    id:newGid,pgn:'',status:'active',
+    white:newPColor==='w'?{name:pName}:{name:newPColor==='b'?(pColor==='w'?oldBlackName:oldWhiteName):'?'},
+    black:newPColor==='b'?{name:pName}:{name:newPColor==='w'?(pColor==='b'?oldWhiteName:oldBlackName):'?'},
+    turn:'w',tc:data.tc||0,created:Date.now(),hook:data.hook||null,chat:[]
+  };
+  // Write to Firebase
+  db.ref('games/'+newGid).set(newData).then(()=>{
+    // Mark old game rematch as started
+    db.ref('games/'+gid+'/rematch').update({newGameId:newGid,status:'started'});
+    pColor=newPColor;
+    gid=newGid;
+    document.querySelectorAll('.result-overlay').forEach(e=>e.remove());
+    initGame(newData);
+    setupFbListener();
+    toast('Rematch started! Colors swapped.');
+  });
+}
+
+function showRematchRequestPanel(){
+  // Show on the result overlay if visible, or as a toast-like panel
+  const overlay=document.querySelector('.result-overlay');
+  if(overlay){
+    let panel=overlay.querySelector('.rematch-request-panel');
+    if(!panel){
+      const btns=overlay.querySelector('.result-btns');
+      if(btns){
+        panel=document.createElement('div');
+        panel.className='rematch-request-panel';
+        panel.innerHTML=`
+          <div class="rematch-request-title">⚔ Opponent wants a Rematch!</div>
+          <div class="rematch-btn-row">
+            <button class="rematch-accept" onclick="acceptRematch()">✓ Accept</button>
+            <button class="rematch-decline" onclick="declineRematch()">✕ Decline</button>
+          </div>`;
+        btns.insertBefore(panel,btns.firstChild);
+      }
+    }
+  } else {
+    // No overlay visible — show a floating panel
+    document.querySelectorAll('.rematch-float-panel').forEach(e=>e.remove());
+    const panel=document.createElement('div');
+    panel.className='rematch-float-panel';
+    panel.style.cssText='position:fixed;bottom:5rem;right:1.25rem;z-index:800;background:var(--surface);border:1px solid var(--gold-dim);padding:1rem;min-width:220px;border-radius:8px;animation:slide-in .25s ease';
+    panel.innerHTML=`
+      <div style="font-family:var(--fn);font-size:.68rem;letter-spacing:.15em;color:var(--gold);margin-bottom:.6rem;text-transform:uppercase">⚔ Rematch Request</div>
+      <div style="font-family:var(--fm);font-size:.7rem;color:var(--text-dim);margin-bottom:.7rem">Your opponent wants a rematch!</div>
+      <div class="rematch-btn-row">
+        <button class="rematch-accept" onclick="acceptRematch();this.closest('.rematch-float-panel').remove()">✓ Accept</button>
+        <button class="rematch-decline" onclick="declineRematch();this.closest('.rematch-float-panel').remove()">✕ Decline</button>
+      </div>`;
+    document.body.appendChild(panel);
+  }
 }
 
 // ══════════════════════════════════════════════
