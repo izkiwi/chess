@@ -2359,6 +2359,38 @@
             showMateOverlay(null, 'The game ended in a draw');
           }
         }
+        // ── DRAW OFFER HANDLING ──
+        if (data.drawOffer && data.drawOffer.from !== pColor && !data.drawOffer.status) {
+          if (!document.getElementById('draw-toast')) {
+            const t = document.createElement('div');
+            t.id = 'draw-toast';
+            t.style.cssText = 'position:fixed;bottom:5rem;left:50%;transform:translateX(-50%);z-index:900;background:var(--surface);border:1px solid var(--gold-dim);padding:.8rem 1.2rem;border-radius:8px;font-family:var(--fn);font-size:.7rem;color:var(--text);display:flex;gap:.7rem;align-items:center;box-shadow:0 4px 24px rgba(0,0,0,.6);white-space:nowrap';
+            t.innerHTML = `<span>🤝 Opponent offers a <b style="color:var(--gold)">draw</b></span>
+              <button style="padding:.3rem .7rem;background:var(--gold);color:var(--bg);border:none;border-radius:4px;cursor:pointer;font-family:var(--fn);font-size:.62rem;font-weight:700" onclick="
+                db.ref('games/'+gid+'/drawOffer').update({status:'accepted'});
+                document.getElementById('draw-toast').remove();
+                gStatus='finished'; stopClock();
+                db.ref('games/'+gid).update({status:'finished',winner:'draw'});
+                showMateOverlay(null,'Draw agreed');
+              ">✓ Accept</button>
+              <button style="padding:.3rem .7rem;border:1px solid var(--border);background:transparent;color:var(--text-dim);border-radius:4px;cursor:pointer;font-family:var(--fn);font-size:.62rem" onclick="
+                db.ref('games/'+gid+'/drawOffer').update({status:'declined'});
+                document.getElementById('draw-toast').remove();
+                toast('Draw declined.');
+              ">✕ Decline</button>`;
+            document.body.appendChild(t);
+          }
+        }
+        // If our draw offer was accepted or declined, reset the button
+        if (data.drawOffer && data.drawOffer.from === pColor) {
+          const btn = document.getElementById('btn-draw');
+          if (data.drawOffer.status === 'declined') {
+            if (btn) { btn.disabled = false; btn.textContent = '🤝 Draw'; }
+            toast('Opponent declined your draw offer.');
+            db.ref('games/' + gid + '/drawOffer').remove();
+          }
+        }
+
         // ── REMATCH HANDLING ──
         if (data.rematch) {
           const rm = data.rematch;
@@ -2611,6 +2643,75 @@
       if (useFirebase && db) db.ref('games/' + gid).update({ status: 'finished', winner: w.toLowerCase() });
       sendHook(`♟ **Resignation!** **${pName}** resigned in game \`${gid}\`.`);
       showMateOverlay(w, 'by resignation');
+    }
+
+    // Alias so the game-controls button works
+    function resignGame() { resign(); }
+
+    // ── Offer Draw ────────────────────────────────
+    let _drawOfferPending = false; // true while we're waiting for opponent to respond
+    function offerDraw() {
+      if (gStatus !== 'active') return;
+      if (_drawOfferPending) { toast('Draw offer already pending…'); return; }
+      if (!confirm('Offer a draw to your opponent?')) return;
+      if (!useFirebase || !db) {
+        // Local / solo mode — just accept immediately
+        gStatus = 'finished';
+        stopClock();
+        showMateOverlay(null, 'Draw agreed');
+        return;
+      }
+      _drawOfferPending = true;
+      const btn = document.getElementById('btn-draw');
+      if (btn) { btn.disabled = true; btn.textContent = '⏳ Offer sent…'; }
+      db.ref('games/' + gid + '/drawOffer').set({ from: pColor, ts: Date.now() });
+      toast('Draw offer sent — waiting for opponent.');
+
+      // Listen for opponent response
+      db.ref('games/' + gid + '/drawOffer').on('value', snap => {
+        const offer = snap.val();
+        if (!offer) return;
+        // Opponent accepted (they set status = 'accepted')
+        if (offer.status === 'accepted' && offer.from === pColor) {
+          db.ref('games/' + gid + '/drawOffer').off('value');
+          _drawOfferPending = false;
+          if (btn) { btn.disabled = false; btn.textContent = '🤝 Draw'; }
+          gStatus = 'finished';
+          stopClock();
+          db.ref('games/' + gid).update({ status: 'finished', winner: 'draw' });
+          showMateOverlay(null, 'Draw agreed');
+        }
+        // Opponent declined
+        if (offer.status === 'declined' && offer.from === pColor) {
+          db.ref('games/' + gid + '/drawOffer').off('value');
+          _drawOfferPending = false;
+          if (btn) { btn.disabled = false; btn.textContent = '🤝 Draw'; }
+          toast('Opponent declined the draw offer.');
+          db.ref('games/' + gid + '/drawOffer').remove();
+        }
+      });
+    }
+
+    // ── Flip Board ────────────────────────────────
+    let _boardFlipped = false;
+    function flipBoard() {
+      _boardFlipped = !_boardFlipped;
+      // Temporarily override pColor perspective for rendering
+      const realColor = pColor;
+      pColor = _boardFlipped ? (realColor === 'w' ? 'b' : 'w') : realColor;
+      renderBoard();
+      // Fix coordinate labels
+      const rl = document.getElementById('rank-labels');
+      const fl = document.getElementById('file-labels');
+      if (rl && fl) {
+        const ranks = pColor === 'b' ? ['1','2','3','4','5','6','7','8'] : ['8','7','6','5','4','3','2','1'];
+        const files = pColor === 'b' ? ['h','g','f','e','d','c','b','a'] : ['a','b','c','d','e','f','g','h'];
+        rl.innerHTML = ranks.map(r => `<div class="rank-label">${r}</div>`).join('');
+        fl.innerHTML = files.map(f => `<div class="file-label">${f}</div>`).join('');
+      }
+      // Restore real color so move logic is unaffected
+      pColor = realColor;
+      toast(_boardFlipped ? 'Board flipped' : 'Board restored');
     }
 
     function copyPGN() {
