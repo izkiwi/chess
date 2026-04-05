@@ -1384,17 +1384,6 @@
       background: transparent;
     }
 
-    /* Ensure image board themes render the background image correctly */
-    .theme-tournament .board,
-    .theme-dark-wood .board,
-    .theme-icy-sea .board,
-    .theme-metal .board,
-    .theme-stone .board,
-    .theme-walnut .board {
-      background-repeat: no-repeat;
-      background-position: center center;
-    }
-
     /* ── Tournament (green/cream leather) ── */
     .theme-tournament .board {
       background-image: url('tournament.jpg');
@@ -1734,23 +1723,37 @@
     // BOARD THEMES
     // ══════════════════════════════════════════════
     const THEMES = [
-      { cls: 'theme-tournament', name: 'Tournament' },
-      { cls: 'theme-dark-wood', name: 'Dark Wood' },
-      { cls: 'theme-icy-sea', name: 'Icy Sea' },
-      { cls: 'theme-metal', name: 'Metal' },
-      { cls: 'theme-stone', name: 'Stone' },
-      { cls: 'theme-walnut', name: 'Walnut' }
+      { cls: 'theme-tournament', name: 'Tournament',  img: 'tournament.jpg' },
+      { cls: 'theme-dark-wood',  name: 'Dark Wood',   img: 'dark_wood.jpg'  },
+      { cls: 'theme-icy-sea',    name: 'Icy Sea',     img: 'icy_sea.jpg'    },
+      { cls: 'theme-metal',      name: 'Metal',       img: 'metal.jpg'      },
+      { cls: 'theme-stone',      name: 'Stone',       img: 'stone.jpg'      },
+      { cls: 'theme-walnut',     name: 'Walnut',      img: 'walnut.jpg'     }
     ];
     let currentTheme = THEMES[0];
 
+    // Preload all theme images on start so they are cached when a game begins
+    (function preloadThemeImages() {
+      THEMES.forEach(function(t) {
+        var img = new Image();
+        img.src = new URL(t.img, document.baseURI).href;
+      });
+    })();
+
     function applyRandomTheme() {
-      const t = THEMES[Math.floor(Math.random() * THEMES.length)];
+      var t = THEMES[Math.floor(Math.random() * THEMES.length)];
       currentTheme = t;
-      const board = document.getElementById('board');
+      var board = document.getElementById('board');
       board.classList.remove('theme-classic');
-      THEMES.forEach(th => board.classList.remove(th.cls));
+      THEMES.forEach(function(th) { board.classList.remove(th.cls); });
       board.classList.add(t.cls);
-      const badge = document.getElementById('theme-badge');
+      // Set background-image via JS using an absolute URL.
+      // CSS relative url() paths can silently fail on GitHub Pages subdirectories.
+      var imgUrl = new URL(t.img, document.baseURI).href;
+      board.style.backgroundImage  = "url('" + imgUrl + "')";
+      board.style.backgroundSize   = '100% 100%';
+      board.style.backgroundRepeat = 'no-repeat';
+      var badge = document.getElementById('theme-badge');
       if (badge) badge.textContent = t.name;
     }
 
