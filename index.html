@@ -1384,6 +1384,17 @@
       background: transparent;
     }
 
+    /* Ensure image board themes render the background image correctly */
+    .theme-tournament .board,
+    .theme-dark-wood .board,
+    .theme-icy-sea .board,
+    .theme-metal .board,
+    .theme-stone .board,
+    .theme-walnut .board {
+      background-repeat: no-repeat;
+      background-position: center center;
+    }
+
     /* ── Tournament (green/cream leather) ── */
     .theme-tournament .board {
       background-image: url('tournament.jpg');
@@ -1597,7 +1608,7 @@
               <div class="rank-label">1</div>
             </div>
             <div class="board-wrap" style="flex:1;min-height:0;aspect-ratio:1">
-              <div id="board" class="board theme-classic"></div>
+              <div id="board" class="board"></div>
             </div>
           </div>
           <!-- File letters outside board -->
@@ -1655,7 +1666,7 @@
         <div class="mhist">
           <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:.4rem">
             <div class="mhist-title" style="margin-bottom:0">MOVES &nbsp;<span id="move-count" style="color:var(--text-dim);font-weight:400">0</span></div>
-            <span id="theme-badge" style="font-family:var(--fm);font-size:.55rem;color:var(--text-dim)">Classic Wood</span>
+            <span id="theme-badge" style="font-family:var(--fm);font-size:.55rem;color:var(--text-dim)">Tournament</span>
           </div>
           <div id="mlist" class="mlist"><span style="color:var(--text-dim);font-style:italic">No moves yet</span></div>
         </div>
@@ -1736,6 +1747,7 @@
       const t = THEMES[Math.floor(Math.random() * THEMES.length)];
       currentTheme = t;
       const board = document.getElementById('board');
+      board.classList.remove('theme-classic');
       THEMES.forEach(th => board.classList.remove(th.cls));
       board.classList.add(t.cls);
       const badge = document.getElementById('theme-badge');
