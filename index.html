@@ -416,6 +416,71 @@ input[type=checkbox]{width:auto;margin:0;padding:0;cursor:pointer;accent-color:v
 }
 .theme-ice .board{border-color:#1a1a1a;box-shadow:0 0 0 1px #0a0a0a,0 8px 40px rgba(0,0,0,.92),0 0 20px rgba(50,50,50,.12)}
 
+/* ═══════════════ IMAGE BOARD THEMES ═══════════════ */
+/* Shared rule: image themes use the board bg — squares become transparent */
+.theme-tournament .sq.lt,
+.theme-tournament .sq.dk,
+.theme-dark-wood .sq.lt,
+.theme-dark-wood .sq.dk,
+.theme-icy-sea .sq.lt,
+.theme-icy-sea .sq.dk,
+.theme-metal .sq.lt,
+.theme-metal .sq.dk,
+.theme-stone .sq.lt,
+.theme-stone .sq.dk,
+.theme-walnut .sq.lt,
+.theme-walnut .sq.dk {
+  background: transparent;
+}
+
+/* ── Tournament (green/cream leather) ── */
+.theme-tournament .board {
+  background-image: url('tournament.png');
+  background-size: 100% 100%;
+  border-color: #2e6b40;
+  box-shadow: 0 0 0 1px #1a4526, 0 0 0 5px #2e6b40, 0 0 0 6px #1a4526, 0 8px 40px rgba(0,0,0,.85);
+}
+
+/* ── Dark Wood ── */
+.theme-dark-wood .board {
+  background-image: url('dark_wood.png');
+  background-size: 100% 100%;
+  border-color: #5a3810;
+  box-shadow: 0 0 0 1px #3a2208, 0 0 0 5px #5a3810, 0 0 0 6px #3a2208, 0 8px 40px rgba(0,0,0,.9);
+}
+
+/* ── Icy Sea (blue marble) ── */
+.theme-icy-sea .board {
+  background-image: url('icy_sea.png');
+  background-size: 100% 100%;
+  border-color: #4a7a99;
+  box-shadow: 0 0 0 1px #2d5a75, 0 0 0 5px #4a7a99, 0 0 0 6px #2d5a75, 0 8px 40px rgba(0,0,0,.85);
+}
+
+/* ── Metal ── */
+.theme-metal .board {
+  background-image: url('metal.png');
+  background-size: 100% 100%;
+  border-color: #666;
+  box-shadow: 0 0 0 1px #444, 0 0 0 5px #666, 0 0 0 6px #444, 0 8px 40px rgba(0,0,0,.95);
+}
+
+/* ── Stone ── */
+.theme-stone .board {
+  background-image: url('stone.png');
+  background-size: 100% 100%;
+  border-color: #444;
+  box-shadow: 0 0 0 1px #222, 0 0 0 5px #444, 0 0 0 6px #222, 0 8px 40px rgba(0,0,0,.95);
+}
+
+/* ── Walnut ── */
+.theme-walnut .board {
+  background-image: url('walnut.png');
+  background-size: 100% 100%;
+  border-color: #7a5030;
+  box-shadow: 0 0 0 1px #4a3018, 0 0 0 5px #7a5030, 0 0 0 6px #4a3018, 0 8px 40px rgba(0,0,0,.88);
+}
+
 /* Theme pill badge */
 .theme-badge{font-family:var(--fm);font-size:.55rem;letter-spacing:.15em;padding:.18rem .45rem;border:1px solid var(--border);color:var(--text-dim);border-radius:2px;text-transform:uppercase;margin-left:.4rem;opacity:.75}
 
@@ -756,12 +821,18 @@ let dragSq=null,dragEl=null,dragOverSq=null;;
 // BOARD THEMES
 // ══════════════════════════════════════════════
 const THEMES=[
-  {cls:'theme-classic',name:'Maple Wood'},
-  {cls:'theme-ocean',  name:'Dark Walnut'},
-  {cls:'theme-forest', name:'Golden Oak'},
-  {cls:'theme-royal',  name:'Red Mahogany'},
-  {cls:'theme-coral',  name:'Cherry Wood'},
-  {cls:'theme-ice',    name:'Ebony & Birch'}
+  {cls:'theme-classic',   name:'Maple Wood'},
+  {cls:'theme-ocean',     name:'Dark Walnut'},
+  {cls:'theme-forest',    name:'Golden Oak'},
+  {cls:'theme-royal',     name:'Red Mahogany'},
+  {cls:'theme-coral',     name:'Cherry Wood'},
+  {cls:'theme-ice',       name:'Ebony & Birch'},
+  {cls:'theme-tournament',name:'Tournament'},
+  {cls:'theme-dark-wood', name:'Dark Wood'},
+  {cls:'theme-icy-sea',   name:'Icy Sea'},
+  {cls:'theme-metal',     name:'Metal'},
+  {cls:'theme-stone',     name:'Stone'},
+  {cls:'theme-walnut',    name:'Walnut'}
 ];
 let currentTheme=THEMES[0];
 
