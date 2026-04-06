@@ -744,13 +744,13 @@
     .game-center {
       display: flex;
       flex-direction: column;
-      align-items: center;
-      justify-content: center;
+      align-items: stretch;
+      justify-content: stretch;
       overflow: hidden;
       height: 100%;
       min-height: 0;
       min-width: 0;
-      padding: .5rem .6rem;
+      padding: .4rem .5rem;
       background: var(--bg)
     }
 
@@ -758,7 +758,7 @@
     .game-left {
       display: flex;
       flex-direction: column;
-      justify-content: center;
+      justify-content: stretch;
       gap: 0;
       align-items: stretch;
       flex: 1;
@@ -790,7 +790,8 @@
       min-height: 0;
       min-width: 0;
       width: 100%;
-      overflow: hidden
+      overflow: hidden;
+      align-items: center
     }
 
     .board-with-ranks {
@@ -799,7 +800,9 @@
       align-items: stretch;
       flex: 1;
       min-height: 0;
-      min-width: 0
+      min-width: 0;
+      width: 100%;
+      justify-content: center
     }
 
     .rank-labels {
@@ -825,8 +828,10 @@
       display: flex;
       flex-direction: row;
       justify-content: space-around;
-      padding-left: 18px;
-      margin-top: 4px
+      padding-left: 22px;
+      margin-top: 3px;
+      width: 100%;
+      max-width: calc(100% - 0px)
     }
 
     .file-label {
@@ -841,12 +846,14 @@
     /* BOARD */
     .board-wrap {
       position: relative;
-      flex: 1;
-      min-height: 0;
-      min-width: 0;
+      height: 100%;
+      width: auto;
       aspect-ratio: 1 / 1;
       max-height: 100%;
-      max-width: 100%
+      max-width: calc(100% - 22px);
+      min-height: 0;
+      min-width: 0;
+      flex-shrink: 0
     }
 
     .board {
@@ -974,7 +981,7 @@
       align-items: center;
       justify-content: space-between;
       width: 100%;
-      padding: .5rem .7rem;
+      padding: .3rem .7rem;
       background: var(--surface);
       border: 1px solid var(--border);
       flex-shrink: 0;
@@ -1945,7 +1952,7 @@
       <div class="game-left">
 
         <!-- Opponent bar -->
-        <div class="pbar" style="margin-bottom:.4rem">
+        <div class="pbar" style="margin-bottom:.25rem">
           <div style="display:flex;align-items:center;gap:.5rem">
             <div id="opp-dot" class="pdot" style="background:#1a1a1a"></div>
             <div>
@@ -1991,7 +1998,7 @@
         </div>
 
         <!-- My bar -->
-        <div class="pbar" style="margin-top:.4rem">
+        <div class="pbar" style="margin-top:.25rem">
           <div style="display:flex;align-items:center;gap:.5rem">
             <div id="my-dot" class="pdot" style="background:#f0f0f0"></div>
             <div class="pavatar" id="my-avatar" style="border-color:var(--gold);color:var(--gold)">♙</div>
