@@ -6,7 +6,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>KIWI CHESS — Global Network</title>
   <link
-    href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;900&family=Crimson+Pro:ital,wght@0,300;0,400;1,300&family=Share+Tech+Mono&display=swap"
+    href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600&display=swap"
     rel="stylesheet">
   <script src="https://cdn.jsdelivr.net/npm/chess.js@0.10.3/chess.min.js"></script>
   <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
@@ -24,9 +24,9 @@
       --text-dim: #7a8090;
       --light-sq: #eeeed2;
       --dark-sq: #769656;
-      --fn: 'Cinzel', serif;
-      --fb: 'Crimson Pro', serif;
-      --fm: 'Share Tech Mono', monospace;
+      --fn: 'Nunito', sans-serif;
+      --fb: 'Nunito', sans-serif;
+      --fm: 'JetBrains Mono', monospace;
     }
 
     * {
@@ -88,18 +88,18 @@
     .logo {
       font-family: var(--fn);
       font-weight: 900;
-      font-size: 1.1rem;
-      letter-spacing: .18em;
+      font-size: 1.15rem;
+      letter-spacing: .04em;
       color: var(--gold);
-      text-shadow: 0 0 30px rgba(93, 155, 74, .25)
+      text-shadow: none
     }
 
     .logo small {
       display: block;
-      font-size: .6rem;
-      letter-spacing: .35em;
+      font-size: .62rem;
+      letter-spacing: .08em;
       color: var(--text-dim);
-      font-weight: 400;
+      font-weight: 600;
       margin-top: 1px
     }
 
@@ -115,51 +115,52 @@
       align-items: center;
       justify-content: center;
       gap: .4rem;
-      padding: .55rem 1.1rem;
+      padding: .6rem 1.2rem;
       font-family: var(--fn);
-      font-size: .65rem;
-      font-weight: 600;
-      letter-spacing: .15em;
-      text-transform: uppercase;
-      border: 1px solid;
-      border-radius: 6px;
+      font-size: .75rem;
+      font-weight: 700;
+      letter-spacing: .02em;
+      text-transform: none;
+      border: none;
+      border-radius: 8px;
       cursor: pointer;
       background: transparent;
-      transition: all .2s ease;
+      transition: all .15s ease;
       white-space: nowrap
     }
 
     .btn-g {
-      border-color: var(--gold);
-      color: var(--gold);
-      background: rgba(93,155,74,.08)
+      border: none;
+      color: #fff;
+      background: var(--gold)
     }
 
     .btn-g:hover {
-      background: var(--gold);
-      color: var(--bg);
-      box-shadow: 0 4px 14px rgba(93,155,74,.3)
+      background: #4e8c3e;
+      color: #fff;
+      box-shadow: 0 4px 14px rgba(93,155,74,.4)
     }
 
     .btn-s {
-      border-color: var(--border);
-      color: var(--text-dim)
+      border: 1px solid var(--border);
+      color: var(--text-dim);
+      background: var(--surface2)
     }
 
     .btn-s:hover {
       border-color: var(--text-dim);
       color: var(--text);
-      background: rgba(255,255,255,.04)
+      background: rgba(255,255,255,.06)
     }
 
     .btn-r {
-      border-color: #8b2020;
-      color: #c44;
-      background: rgba(140,32,32,.08)
+      border: none;
+      color: #fff;
+      background: #c44
     }
 
     .btn-r:hover {
-      background: #8b2020;
+      background: #a33;
       color: #fff;
       box-shadow: 0 4px 14px rgba(180,40,40,.3)
     }
@@ -188,18 +189,19 @@
       align-items: center;
       justify-content: center;
       gap: .3rem;
-      padding: .42rem .4rem;
-      font-family: var(--fm);
-      font-size: .58rem;
-      letter-spacing: .08em;
+      padding: .5rem .4rem;
+      font-family: var(--fn);
+      font-size: .72rem;
+      font-weight: 600;
+      letter-spacing: 0;
       border: 1px solid var(--border);
-      border-radius: 6px;
+      border-radius: 8px;
       cursor: pointer;
       background: var(--surface2);
       color: var(--text-dim);
-      transition: all .18s;
+      transition: all .15s;
       white-space: nowrap;
-      text-transform: uppercase
+      text-transform: none
     }
 
     .ctrl-btn:hover {
@@ -217,12 +219,13 @@
     /* INPUTS */
     label {
       display: block;
-      font-family: var(--fm);
-      font-size: .65rem;
-      letter-spacing: .15em;
+      font-family: var(--fn);
+      font-size: .72rem;
+      font-weight: 700;
+      letter-spacing: .03em;
       color: var(--text-dim);
       margin-bottom: .35rem;
-      text-transform: uppercase
+      text-transform: none
     }
 
     input,
@@ -233,9 +236,10 @@
       border: 1px solid var(--border);
       color: var(--text);
       padding: .55rem .75rem;
-      font-family: var(--fm);
-      font-size: .8rem;
-      border-radius: 1px;
+      font-family: var(--fn);
+      font-size: .82rem;
+      font-weight: 500;
+      border-radius: 8px;
       outline: none;
       transition: border-color .2s;
       margin-bottom: .9rem
@@ -274,11 +278,12 @@
 
     .card-title {
       font-family: var(--fn);
-      font-size: .7rem;
-      letter-spacing: .22em;
+      font-size: .78rem;
+      font-weight: 800;
+      letter-spacing: .03em;
       color: var(--gold);
       margin-bottom: 1.25rem;
-      text-transform: uppercase
+      text-transform: none
     }
 
     .divider {
@@ -307,13 +312,14 @@
     .tab {
       padding: .55rem .9rem;
       font-family: var(--fn);
-      font-size: .65rem;
-      letter-spacing: .15em;
-      text-transform: uppercase;
+      font-size: .75rem;
+      font-weight: 700;
+      letter-spacing: 0;
+      text-transform: none;
       cursor: pointer;
       color: var(--text-dim);
       border-bottom: 2px solid transparent;
-      transition: all .18s
+      transition: all .15s
     }
 
     .tab.active {
@@ -343,15 +349,16 @@
       font-family: var(--fn);
       font-size: 2.2rem;
       font-weight: 900;
-      letter-spacing: .2em;
+      letter-spacing: .04em;
       color: var(--gold);
-      text-shadow: 0 0 50px rgba(93, 155, 74, .3)
+      text-shadow: none
     }
 
     .setup-logo p {
-      font-family: var(--fm);
-      font-size: .65rem;
-      letter-spacing: .3em;
+      font-family: var(--fn);
+      font-size: .72rem;
+      font-weight: 600;
+      letter-spacing: .08em;
       color: var(--text-dim);
       margin-top: .4rem
     }
@@ -431,17 +438,18 @@
       font-family: var(--fn);
       font-size: clamp(1.6rem, 5vw, 2.6rem);
       font-weight: 900;
-      letter-spacing: .22em;
+      letter-spacing: .04em;
       color: var(--gold);
-      text-shadow: 0 0 50px rgba(93, 155, 74, .6), 0 2px 12px rgba(0, 0, 0, .8);
-      text-transform: uppercase
+      text-shadow: 0 0 50px rgba(93, 155, 74, .5), 0 2px 12px rgba(0, 0, 0, .8);
+      text-transform: none
     }
 
     .lm-above-sub {
-      font-family: var(--fm);
-      font-size: clamp(.5rem, 1.5vw, .62rem);
-      letter-spacing: .45em;
-      color: rgba(93, 155, 74, .65);
+      font-family: var(--fn);
+      font-size: clamp(.6rem, 1.5vw, .72rem);
+      font-weight: 600;
+      letter-spacing: .1em;
+      color: rgba(93, 155, 74, .75);
       margin-top: .25rem
     }
 
@@ -455,12 +463,12 @@
 
     .lm-title {
       font-family: var(--fn);
-      font-size: clamp(.7rem, 2vw, .85rem);
-      font-weight: 900;
-      letter-spacing: .32em;
+      font-size: clamp(.75rem, 2vw, .9rem);
+      font-weight: 800;
+      letter-spacing: .04em;
       color: var(--gold);
-      text-transform: uppercase;
-      text-shadow: 0 0 30px rgba(93, 155, 74, .5)
+      text-transform: none;
+      text-shadow: none
     }
 
     .lm-vs {
@@ -468,27 +476,60 @@
       align-items: center;
       gap: 1.1rem;
       font-family: var(--fn);
-      font-size: .65rem;
-      letter-spacing: .18em;
+      font-size: .75rem;
+      font-weight: 600;
+      letter-spacing: 0;
       color: var(--text-dim)
     }
 
     .lm-pname {
       color: var(--text);
-      letter-spacing: .1em;
-      font-size: .72rem
+      letter-spacing: 0;
+      font-size: .78rem;
+      font-weight: 700
     }
 
     .lm-sep {
       color: var(--gold-dim);
-      font-size: .6rem
+      font-size: .65rem
     }
 
     .lm-room {
-      font-family: var(--fm);
-      font-size: .62rem;
-      letter-spacing: .2em;
+      font-family: var(--fn);
+      font-size: .68rem;
+      font-weight: 700;
+      letter-spacing: .04em;
       color: var(--gold-dim)
+    }
+
+    .lm-join-log {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: .45rem;
+      margin-top: .7rem
+    }
+
+    .lm-join-entry {
+      font-family: var(--fn);
+      font-size: .72rem;
+      font-weight: 600;
+      color: var(--text);
+      letter-spacing: 0;
+      animation: fadeInUp .3s ease
+    }
+
+    @keyframes fadeInUp {
+      from { opacity: 0; transform: translateY(6px) }
+      to   { opacity: 1; transform: translateY(0) }
+    }
+
+    .lm-join-waiting {
+      font-family: var(--fn);
+      font-size: .68rem;
+      font-weight: 600;
+      color: var(--text-dim);
+      letter-spacing: .02em
     }
 
     .lm-dots {
@@ -554,20 +595,23 @@
     }
 
     .gi-id {
-      font-family: var(--fm);
-      font-size: .85rem;
+      font-family: var(--fn);
+      font-size: .88rem;
+      font-weight: 800;
       color: var(--gold);
-      letter-spacing: .1em
+      letter-spacing: .02em
     }
 
     .gi-info {
-      font-size: .72rem;
+      font-size: .75rem;
+      font-weight: 500;
       color: var(--text-dim)
     }
 
     .gi-join {
-      font-family: var(--fm);
-      font-size: .62rem;
+      font-family: var(--fn);
+      font-size: .7rem;
+      font-weight: 700;
       color: #7289da
     }
 
@@ -605,9 +649,10 @@
     }
 
     .sidebar-label {
-      font-family: var(--fm);
-      font-size: .55rem;
-      letter-spacing: .25em;
+      font-family: var(--fn);
+      font-size: .65rem;
+      font-weight: 700;
+      letter-spacing: .06em;
       color: var(--text-dim);
       text-transform: uppercase;
       margin-bottom: .6rem
@@ -617,9 +662,8 @@
       font-family: var(--fn);
       font-size: 1.3rem;
       font-weight: 900;
-      letter-spacing: .18em;
-      color: var(--gold);
-      text-shadow: 0 0 20px rgba(93,155,74,.3)
+      letter-spacing: .06em;
+      color: var(--gold)
     }
 
     .sidebar-badges {
@@ -630,11 +674,12 @@
     }
 
     .sbadge {
-      font-family: var(--fm);
-      font-size: .5rem;
-      letter-spacing: .1em;
+      font-family: var(--fn);
+      font-size: .6rem;
+      font-weight: 700;
+      letter-spacing: .02em;
       padding: .18rem .5rem;
-      border-radius: 3px;
+      border-radius: 6px;
       background: rgba(93,155,74,.1);
       border: 1px solid rgba(93,155,74,.2);
       color: var(--gold-dim)
@@ -658,14 +703,15 @@
       align-items: center;
       gap: .6rem;
       padding: .55rem .7rem;
-      border-radius: 7px;
+      border-radius: 8px;
       cursor: pointer;
       font-family: var(--fn);
-      font-size: .65rem;
-      letter-spacing: .1em;
+      font-size: .78rem;
+      font-weight: 700;
+      letter-spacing: 0;
       color: var(--text-dim);
-      transition: all .18s;
-      text-transform: uppercase
+      transition: all .15s;
+      text-transform: none
     }
 
     .snav-item:hover {
@@ -699,22 +745,23 @@
       align-items: center;
       justify-content: center;
       gap: .4rem;
-      padding: .65rem;
+      padding: .7rem;
       font-family: var(--fn);
-      font-size: .62rem;
-      letter-spacing: .12em;
-      text-transform: uppercase;
-      border: 1px solid var(--gold-dim);
-      border-radius: 7px;
+      font-size: .75rem;
+      font-weight: 700;
+      letter-spacing: 0;
+      text-transform: none;
+      border: none;
+      border-radius: 8px;
       cursor: pointer;
-      background: rgba(93,155,74,.08);
-      color: var(--gold);
-      transition: all .18s
+      background: var(--gold);
+      color: #fff;
+      transition: all .15s
     }
 
     .sidebar-share-btn:hover {
-      background: var(--gold);
-      color: var(--bg)
+      background: #4e8c3e;
+      color: #fff
     }
 
     .sidebar-resign-btn {
@@ -722,17 +769,18 @@
       align-items: center;
       justify-content: center;
       gap: .4rem;
-      padding: .65rem;
+      padding: .7rem;
       font-family: var(--fn);
-      font-size: .62rem;
-      letter-spacing: .12em;
-      text-transform: uppercase;
-      border: 1px solid rgba(180,50,50,.4);
-      border-radius: 7px;
+      font-size: .75rem;
+      font-weight: 700;
+      letter-spacing: 0;
+      text-transform: none;
+      border: none;
+      border-radius: 8px;
       cursor: pointer;
-      background: rgba(180,50,50,.08);
+      background: rgba(180,50,50,.15);
       color: #e05;
-      transition: all .18s
+      transition: all .15s
     }
 
     .sidebar-resign-btn:hover {
@@ -816,7 +864,7 @@
     }
 
     .rank-label {
-      font-family: var(--fm);
+      font-family: var(--fn);
       font-size: .62rem;
       font-weight: 700;
       color: rgba(93, 155, 74, .7);
@@ -835,7 +883,7 @@
     }
 
     .file-label {
-      font-family: var(--fm);
+      font-family: var(--fn);
       font-size: .62rem;
       font-weight: 700;
       color: rgba(93, 155, 74, .7);
@@ -1017,23 +1065,26 @@
 
     .pname {
       font-family: var(--fn);
-      font-size: .73rem;
-      letter-spacing: .06em;
+      font-size: .82rem;
+      font-weight: 700;
+      letter-spacing: 0;
       color: var(--text)
     }
 
     .prating {
-      font-family: var(--fm);
-      font-size: .55rem;
+      font-family: var(--fn);
+      font-size: .62rem;
+      font-weight: 600;
       color: var(--text-dim);
       margin-top: 1px
     }
 
     .pstatus {
-      font-family: var(--fm);
-      font-size: .58rem;
+      font-family: var(--fn);
+      font-size: .65rem;
+      font-weight: 600;
       color: var(--text-dim);
-      letter-spacing: .05em
+      letter-spacing: 0
     }
 
     .pstatus.on {
@@ -1060,8 +1111,9 @@
 
     .stext {
       font-family: var(--fn);
-      font-size: .7rem;
-      letter-spacing: .12em;
+      font-size: .78rem;
+      font-weight: 700;
+      letter-spacing: .02em;
       color: var(--gold)
     }
 
@@ -1077,16 +1129,18 @@
 
     .mhist-title {
       font-family: var(--fn);
-      font-size: .58rem;
-      letter-spacing: .2em;
+      font-size: .72rem;
+      font-weight: 800;
+      letter-spacing: .02em;
       color: var(--gold);
-      text-transform: uppercase;
+      text-transform: none;
       margin-bottom: .45rem
     }
 
     .mlist {
-      font-family: var(--fm);
-      font-size: .73rem;
+      font-family: var(--fn);
+      font-size: .78rem;
+      font-weight: 600;
       color: var(--text-dim);
       line-height: 1
     }
@@ -1143,8 +1197,9 @@
       flex: 1;
       overflow-y: auto;
       padding: .45rem .55rem;
-      font-size: .7rem;
-      font-family: var(--fm);
+      font-size: .75rem;
+      font-family: var(--fn);
+      font-weight: 500;
       line-height: 1.5
     }
 
@@ -1171,9 +1226,10 @@
       background: transparent;
       border: none;
       padding: .35rem .5rem;
-      font-size: .7rem;
+      font-size: .75rem;
+      font-weight: 500;
       color: var(--text);
-      font-family: var(--fm);
+      font-family: var(--fn);
       margin: 0;
       outline: none
     }
@@ -1189,8 +1245,9 @@
       color: var(--gold);
       padding: 0 .65rem;
       cursor: pointer;
-      font-family: var(--fm);
-      font-size: .65rem
+      font-family: var(--fn);
+      font-weight: 700;
+      font-size: .72rem
     }
 
     /* GAME INFO PANEL */
@@ -1198,21 +1255,24 @@
       background: var(--surface);
       border: 1px solid var(--border);
       padding: .65rem .75rem;
-      font-family: var(--fm);
-      font-size: .7rem;
+      font-family: var(--fn);
+      font-size: .72rem;
+      font-weight: 600;
       flex-shrink: 0
     }
 
     .gid {
-      font-size: .85rem;
+      font-size: .9rem;
+      font-weight: 800;
       color: var(--gold);
-      letter-spacing: .15em;
+      letter-spacing: .04em;
       word-break: break-all;
       margin: .25rem 0
     }
 
     .gid-sub {
-      font-size: .62rem;
+      font-size: .65rem;
+      font-weight: 600;
       color: var(--text-dim)
     }
 
@@ -1233,8 +1293,9 @@
       display: flex;
       align-items: center;
       gap: .5rem;
-      font-family: var(--fm);
-      font-size: .72rem;
+      font-family: var(--fn);
+      font-size: .75rem;
+      font-weight: 600;
       color: var(--text-dim)
     }
 
@@ -1298,11 +1359,12 @@
 
     .modal h3 {
       font-family: var(--fn);
-      font-size: .85rem;
-      letter-spacing: .2em;
+      font-size: .95rem;
+      font-weight: 800;
+      letter-spacing: .02em;
       color: var(--gold);
       margin-bottom: 1.4rem;
-      text-transform: uppercase
+      text-transform: none
     }
 
     .promo-pieces {
@@ -1329,11 +1391,13 @@
       right: 1.25rem;
       background: var(--surface);
       border: 1px solid var(--gold-dim);
-      padding: .65rem 1.1rem;
-      font-family: var(--fm);
-      font-size: .75rem;
+      padding: .7rem 1.1rem;
+      font-family: var(--fn);
+      font-size: .78rem;
+      font-weight: 600;
       color: var(--text);
       z-index: 999;
+      border-radius: 8px;
       animation: slide-in .25s ease;
       max-width: 280px;
       line-height: 1.4
@@ -1353,81 +1417,58 @@
 
     /* REMATCH STYLES */
     .rematch-pending {
-      font-family: var(--fm);
-      font-size: .68rem;
-      letter-spacing: .12em;
+      font-family: var(--fn);
+      font-size: .72rem;
+      font-weight: 600;
+      letter-spacing: 0;
       color: var(--text-dim);
       text-align: center;
       margin-top: .5rem;
       padding: .45rem;
       background: rgba(93, 155, 74, .06);
       border: 1px solid rgba(93, 155, 74, .15);
-      border-radius: 6px
-    }
-
-    .rematch-request-panel {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: .6rem;
-      margin-top: .5rem;
-      padding: .8rem;
-      background: rgba(93, 155, 74, .07);
-      border: 1px solid rgba(93, 155, 74, .2);
       border-radius: 8px
     }
 
     .rematch-request-title {
       font-family: var(--fn);
-      font-size: .7rem;
-      letter-spacing: .18em;
+      font-size: .78rem;
+      font-weight: 800;
+      letter-spacing: 0;
       color: var(--gold);
-      text-transform: uppercase
-    }
-
-    .rematch-btn-row {
-      display: flex;
-      gap: .5rem;
-      width: 100%
+      text-transform: none
     }
 
     .rematch-accept {
       flex: 1;
-      padding: .55rem;
+      padding: .6rem;
       font-family: var(--fn);
-      font-size: .65rem;
-      letter-spacing: .12em;
-      background: linear-gradient(135deg, #3a7a3a, #256025);
+      font-size: .75rem;
+      font-weight: 700;
+      letter-spacing: 0;
+      background: var(--gold);
       border: none;
       color: #fff;
-      border-radius: 7px;
+      border-radius: 8px;
       cursor: pointer;
-      text-transform: uppercase;
-      transition: all .18s
-    }
-
-    .rematch-accept:hover {
-      filter: brightness(1.15)
+      text-transform: none;
+      transition: all .15s
     }
 
     .rematch-decline {
       flex: 1;
-      padding: .55rem;
+      padding: .6rem;
       font-family: var(--fn);
-      font-size: .65rem;
-      letter-spacing: .12em;
+      font-size: .75rem;
+      font-weight: 700;
+      letter-spacing: 0;
       background: rgba(150, 40, 40, .6);
       border: 1px solid rgba(220, 80, 80, .3);
       color: #f88;
-      border-radius: 7px;
+      border-radius: 8px;
       cursor: pointer;
-      text-transform: uppercase;
-      transition: all .18s
-    }
-
-    .rematch-decline:hover {
-      background: rgba(180, 50, 50, .7);
-      color: #fff
+      text-transform: none;
+      transition: all .15s
     }
 
     /* CHECK HINT — highlight squares of pieces that can still move */
@@ -1620,27 +1661,28 @@
 
     /* Theme pill badge */
     .theme-badge {
-      font-family: var(--fm);
-      font-size: .55rem;
-      letter-spacing: .15em;
-      padding: .18rem .45rem;
+      font-family: var(--fn);
+      font-size: .62rem;
+      font-weight: 700;
+      letter-spacing: .02em;
+      padding: .18rem .5rem;
       border: 1px solid var(--border);
       color: var(--text-dim);
-      border-radius: 2px;
-      text-transform: uppercase;
+      border-radius: 6px;
+      text-transform: none;
       margin-left: .4rem;
-      opacity: .75
+      opacity: .85
     }
 
     /* ═══════════════ CHESS CLOCK ═══════════════ */
     .clock {
-      font-family: var(--fm);
+      font-family: var(--fn);
       font-size: 1rem;
-      letter-spacing: .06em;
-      font-weight: 700;
+      letter-spacing: .02em;
+      font-weight: 800;
       padding: .2rem .55rem;
       border: 1px solid var(--border);
-      border-radius: 2px;
+      border-radius: 6px;
       min-width: 58px;
       text-align: center;
       transition: all .3s;
@@ -1750,9 +1792,10 @@
     .result-title.draw { color: #c9c04a }
 
     .result-sub {
-      font-family: var(--fm);
-      font-size: .72rem;
-      letter-spacing: .1em;
+      font-family: var(--fn);
+      font-size: .78rem;
+      font-weight: 600;
+      letter-spacing: 0;
       color: var(--text-dim);
       margin-bottom: 1.2rem
     }
@@ -1773,19 +1816,19 @@
       width: 100%;
       padding: .75rem;
       font-family: var(--fn);
-      font-size: .72rem;
-      font-weight: 700;
-      letter-spacing: .14em;
-      text-transform: uppercase;
+      font-size: .82rem;
+      font-weight: 800;
+      letter-spacing: 0;
+      text-transform: none;
       border: none;
       border-radius: 8px;
       cursor: pointer;
-      transition: filter .18s, transform .12s;
+      transition: filter .15s, transform .12s;
       color: #fff
     }
 
     .result-btn-primary:hover {
-      filter: brightness(1.12);
+      filter: brightness(1.1);
       transform: translateY(-1px)
     }
 
@@ -1796,18 +1839,18 @@
 
     .result-btn-secondary {
       flex: 1;
-      padding: .55rem .5rem;
+      padding: .6rem .5rem;
       font-family: var(--fn);
-      font-size: .6rem;
-      font-weight: 600;
-      letter-spacing: .1em;
-      text-transform: uppercase;
+      font-size: .72rem;
+      font-weight: 700;
+      letter-spacing: 0;
+      text-transform: none;
       background: rgba(255,255,255,.06);
       border: 1px solid rgba(255,255,255,.1);
-      border-radius: 7px;
+      border-radius: 8px;
       color: var(--text-dim);
       cursor: pointer;
-      transition: all .18s
+      transition: all .15s
     }
 
     .result-btn-secondary:hover {
@@ -1825,12 +1868,12 @@
       background: rgba(220,60,60,.92);
       color: #fff;
       font-family: var(--fn);
-      font-size: .7rem;
-      font-weight: 700;
-      letter-spacing: .18em;
-      text-transform: uppercase;
+      font-size: .78rem;
+      font-weight: 800;
+      letter-spacing: .02em;
+      text-transform: none;
       padding: .55rem 1.4rem;
-      border-radius: 6px;
+      border-radius: 8px;
       z-index: 700;
       box-shadow: 0 4px 20px rgba(220,60,60,.45);
       animation: check-banner-in .22s ease
@@ -1857,8 +1900,8 @@
     <div class="hdr" style="position:relative;z-index:3">
       <div class="logo">KIWI CHESS <small>GLOBAL NETWORK</small></div>
       <div class="hdr-right">
-        <span id="lby-pname" style="font-family:var(--fm);font-size:.75rem;color:var(--text-dim)"></span>
-        <span id="fb-badge" style="font-family:var(--fm);font-size:.62rem;color:var(--text-dim)">● LOCAL</span>
+        <span id="lby-pname" style="font-family:var(--fn);font-size:.8rem;font-weight:600;color:var(--text-dim)"></span>
+        <span id="fb-badge" style="font-family:var(--fn);font-size:.68rem;font-weight:700;color:var(--text-dim)">● LOCAL</span>
       </div>
     </div>
 
@@ -1889,6 +1932,7 @@
           <span class="lm-pname" id="lm-black">—</span>
         </div>
         <div class="lm-room" id="lm-room-id" style="display:none"></div>
+        <div id="lm-join-log" class="lm-join-log"></div>
       </div>
 
       <!-- manual join removed -->
@@ -2025,11 +2069,11 @@
         <div style="background:var(--surface2);border-bottom:1px solid var(--border);padding:.55rem .8rem;display:flex;align-items:center;justify-content:space-between;flex-shrink:0;gap:.4rem">
           <div style="display:flex;align-items:center;gap:.45rem;min-width:0">
             <div style="font-family:var(--fn);font-size:.56rem;letter-spacing:.15em;color:var(--gold);white-space:nowrap">MOVES</div>
-            <span id="move-count" style="font-family:var(--fm);font-size:.65rem;color:var(--text-dim)">0</span>
+            <span id="move-count" style="font-family:var(--fn);font-weight:600;font-size:.72rem;color:var(--text-dim)">0</span>
           </div>
           <div style="display:flex;align-items:center;gap:.35rem;flex-shrink:0">
-            <span id="theme-badge" style="font-family:var(--fm);font-size:.52rem;color:var(--text-dim)">Tournament</span>
-            <label style="display:flex;align-items:center;gap:.2rem;margin:0;padding:0;font-family:var(--fm);font-size:.55rem;color:var(--text-dim);cursor:pointer;white-space:nowrap" title="Notify moves">
+            <span id="theme-badge" style="font-family:var(--fn);font-weight:700;font-size:.62rem;color:var(--text-dim)">Tournament</span>
+            <label style="display:flex;align-items:center;gap:.2rem;margin:0;padding:0;font-family:var(--fn);font-weight:600;font-size:.68rem;color:var(--text-dim);cursor:pointer;white-space:nowrap" title="Notify moves">
               <input type="checkbox" id="notify-moves" style="margin:0;padding:0;width:auto">notify
             </label>
           </div>
@@ -2194,6 +2238,41 @@
     // UI UTILS
     // ══════════════════════════════════════════════
     function show(s) { document.querySelectorAll('.screen').forEach(x => x.classList.remove('active')); document.getElementById('sc-' + s).classList.add('active') }
+
+    // ── LOBBY JOIN LOG ──────────────────────────────
+    function updateLobbyJoinLog(data) {
+      const log = document.getElementById('lm-join-log');
+      const title = document.getElementById('lm-status-title');
+      const dots = document.getElementById('lm-dots');
+      const vsRow = document.getElementById('lm-vs-row');
+      const roomEl = document.getElementById('lm-room-id');
+      if (!log) return;
+
+      // Show room ID
+      if (roomEl && gid) { roomEl.textContent = 'ROOM · ' + gid; roomEl.style.display = ''; }
+
+      // Show VS row
+      const wn = data.white?.name, bn = data.black?.name;
+      vsRow.style.display = 'flex';
+      document.getElementById('lm-white').textContent = wn ? wn + (pColor === 'w' ? ' (You)' : '') : '—';
+      document.getElementById('lm-black').textContent = bn ? bn + (pColor === 'b' ? ' (You)' : '') : '—';
+
+      // Build join entries
+      const entries = [];
+      if (wn) entries.push(`<div class="lm-join-entry">✅ @${wn} joined the game &nbsp;<span style="color:var(--text-dim);font-size:.62rem">(White ♔)</span></div>`);
+      if (bn) entries.push(`<div class="lm-join-entry">✅ @${bn} joined the game &nbsp;<span style="color:var(--text-dim);font-size:.62rem">(Black ♚)</span></div>`);
+
+      if (wn && bn) {
+        entries.push(`<div class="lm-join-entry" style="color:var(--gold);margin-top:.35rem;font-size:.74rem">⚡ Both players ready — starting game…</div>`);
+        title.textContent = 'MATCH FOUND';
+        dots.style.display = 'none';
+      } else if (wn || bn) {
+        entries.push(`<div class="lm-join-waiting">Waiting for opponent to join…</div>`);
+        title.textContent = 'WAITING FOR OPPONENT';
+        dots.style.display = 'flex';
+      }
+      log.innerHTML = entries.join('');
+    }
     function stab(t) { document.querySelectorAll('.tab').forEach(x => x.classList.remove('active')); document.querySelectorAll('.tab-content').forEach(x => x.style.display = 'none'); const map = { quick: 0, firebase: 1, discord: 2 }; document.querySelectorAll('.tab')[map[t]].classList.add('active'); document.getElementById('tab-' + t).style.display = 'block' }
     function toast(msg, dur = 3500) { const d = document.createElement('div'); d.className = 'toast'; d.textContent = msg; document.body.appendChild(d); setTimeout(() => d.remove(), dur) }
     function chatAdd(user, txt, sys = false) { const c = document.getElementById('chat-msgs'); const d = document.createElement('div'); d.style.marginBottom = '2px'; d.innerHTML = sys ? `<span class="cm-sys">${txt}</span>` : `<span class="cm-user">${user}:</span> <span class="cm-txt">${txt}</span>`; c.appendChild(d); c.scrollTop = c.scrollHeight }
@@ -2741,11 +2820,22 @@
         }
         // Opponent joined
         if (data.status === 'active' && gStatus === 'waiting') {
+          // Update gStatus early so re-fires don't retrigger
           gStatus = 'active';
-          document.getElementById('wait-indicator').style.display = 'none';
-          const oppN = pColor === 'w' ? data.black?.name : data.white?.name;
-          if (oppN) { document.getElementById('opp-name').textContent = oppN; toast('Opponent joined: ' + oppN); sendHook(`♟ **Game Started!** \`${gid}\` — ${data.white?.name || '?'} vs ${data.black?.name || '?'}`) }
-          startClock();
+          if (document.getElementById('sc-lobby').classList.contains('active')) {
+            // Still on lobby — show "both joined", then transition
+            updateLobbyJoinLog(data);
+            const oppN = pColor === 'w' ? data.black?.name : data.white?.name;
+            if (oppN) toast('Opponent joined: ' + oppN);
+            sendHook(`♟ **Game Started!** \`${gid}\` — ${data.white?.name || '?'} vs ${data.black?.name || '?'}`);
+            setTimeout(() => { initGame(data); }, 1500);
+          } else {
+            // Already on game screen (edge-case fallback)
+            document.getElementById('wait-indicator').style.display = 'none';
+            const oppN = pColor === 'w' ? data.black?.name : data.white?.name;
+            if (oppN) { document.getElementById('opp-name').textContent = oppN; toast('Opponent joined: ' + oppN); sendHook(`♟ **Game Started!** \`${gid}\` — ${data.white?.name || '?'} vs ${data.black?.name || '?'}`) }
+            startClock();
+          }
         }
         // Game finished by opponent
         if (data.status === 'finished' && gStatus !== 'finished') {
@@ -2914,7 +3004,7 @@
         panel.style.cssText = 'position:fixed;bottom:5rem;right:1.25rem;z-index:800;background:var(--surface);border:1px solid var(--gold-dim);padding:1rem;min-width:220px;border-radius:8px;animation:slide-in .25s ease';
         panel.innerHTML = `
       <div style="font-family:var(--fn);font-size:.68rem;letter-spacing:.15em;color:var(--gold);margin-bottom:.6rem;text-transform:uppercase">⚔ Rematch Request</div>
-      <div style="font-family:var(--fm);font-size:.7rem;color:var(--text-dim);margin-bottom:.7rem">Your opponent wants a rematch!</div>
+      <div style="font-family:var(--fn);font-weight:600;font-size:.78rem;color:var(--text-dim);margin-bottom:.7rem">Your opponent wants a rematch!</div>
       <div class="rematch-btn-row">
         <button class="rematch-accept" onclick="acceptRematch();this.closest('.rematch-float-panel').remove()">✓ Accept</button>
         <button class="rematch-decline" onclick="declineRematch();this.closest('.rematch-float-panel').remove()">✕ Decline</button>
@@ -2997,7 +3087,7 @@
 
     function renderGames(gs) {
       const list = document.getElementById('games-list');
-      if (!gs.length) { list.innerHTML = '<div style="font-family:var(--fm);font-size:.72rem;color:var(--text-dim);padding:.75rem;text-align:center">No open games — create one!</div>'; return }
+      if (!gs.length) { list.innerHTML = '<div style="font-family:var(--fn);font-weight:600;font-size:.78rem;color:var(--text-dim);padding:.75rem;text-align:center">No open games — create one!</div>'; return }
       list.innerHTML = gs.map(g => `
     <div class="game-item" onclick="document.getElementById('join-id').value='${g.id}';joinGame()">
       <div><div class="gi-id">${g.id}</div><div class="gi-info">${g.white?.name || '?'} vs ?</div></div>
@@ -3378,8 +3468,17 @@ client.login(BOT_TOKEN);
             return { ...data, status };
           })
           .then(finalData => {
-            initGame(finalData);
-            setupFbListener();
+            // Show lobby join state
+            updateLobbyJoinLog(finalData);
+            if (finalData.status === 'active') {
+              // Both players present — transition to game after brief "Starting…" display
+              setTimeout(() => { initGame(finalData); setupFbListener(); }, 1500);
+            } else {
+              // Still waiting — stay on lobby and listen for opponent
+              game = new Chess();
+              if (finalData.pgn) try { game.load_pgn(finalData.pgn) } catch (e) { }
+              setupFbListener();
+            }
           })
           .catch(e => {
             console.error('[autoJoin]', e);
