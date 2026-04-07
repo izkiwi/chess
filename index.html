@@ -623,13 +623,23 @@
     .game-body {
       flex: 1;
       display: grid;
-      grid-template-columns: 150px 1fr 260px;
+      grid-template-columns: 150px 1fr;
       grid-template-rows: 1fr;
       gap: 0;
       padding: 0;
       overflow: hidden;
       height: 100%;
       min-height: 0
+    }
+
+    /* Main area: board + right panel side by side */
+    .game-main {
+      display: flex;
+      flex-direction: row;
+      overflow: hidden;
+      height: 100%;
+      min-height: 0;
+      min-width: 0
     }
 
     /* LEFT SIDEBAR — Chess.com style nav panel */
@@ -788,15 +798,15 @@
       color: #fff
     }
 
-    /* CENTER COLUMN: player bars + board */
+    /* CENTER COLUMN: auto-width so it shrink-wraps the square board */
     .game-center {
       display: flex;
       flex-direction: column;
       overflow: hidden;
       height: 100%;
       min-height: 0;
-      min-width: 0;
-      padding: .5rem .6rem;
+      flex-shrink: 0;
+      padding: .5rem .55rem;
       background: var(--bg)
     }
 
@@ -812,13 +822,14 @@
       overflow: hidden
     }
 
-    /* RIGHT COLUMN */
+    /* RIGHT COLUMN — fills all remaining horizontal space */
     .game-right {
       display: flex;
       flex-direction: column;
       gap: 0;
-      width: 100%;
-      flex-shrink: 0;
+      flex: 1;
+      min-width: 200px;
+      max-width: 320px;
       overflow: hidden;
       height: 100%;
       min-height: 0;
@@ -833,9 +844,7 @@
       flex: 1;
       min-height: 0;
       min-width: 0;
-      width: 100%;
       overflow: hidden;
-      align-items: stretch;
       padding: .2rem 0
     }
 
@@ -845,9 +854,7 @@
       align-items: stretch;
       flex: 1;
       min-height: 0;
-      min-width: 0;
-      width: 100%;
-      justify-content: center
+      min-width: 0
     }
 
     .rank-labels {
@@ -1533,9 +1540,13 @@
         gap: 0
       }
 
+      .game-main {
+        flex-direction: column
+      }
+
       .game-center {
         padding: .25rem;
-        width: 100%
+        flex-shrink: 1
       }
 
       .game-left {
@@ -1988,6 +1999,7 @@
       </div>
 
       <!-- ── CENTER: board column ── -->
+      <div class="game-main">
       <div class="game-center">
       <div class="game-left">
 
@@ -2097,7 +2109,8 @@
             <button class="chat-send" onclick="sendChat()">SEND</button>
           </div>
         </div>
-      </div>
+      </div><!-- /game-right -->
+      </div><!-- /game-main -->
     </div>
   </div>
 
