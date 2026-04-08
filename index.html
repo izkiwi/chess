@@ -1928,7 +1928,714 @@
       from { opacity: 0; transform: translateX(-50%) translateY(-8px) }
       to   { opacity: 1; transform: translateX(-50%) translateY(0) }
     }
-  </style>
+  
+
+/* ══════════════ INDEX.HTML LAYOUT CSS ══════════════ */
+
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+:root {
+  --bg:        #1f1f1f;
+  --surface:   #272727;
+  --surface2:  #2b2b2b;
+  --surface3:  #313131;
+  --panel:     #252525;
+  --border:    rgba(255,255,255,0.07);
+  --border2:   rgba(255,255,255,0.12);
+  --text:      #d1d5db;
+  --text-dim:  #6b7280;
+  --text-muted:#9ca3af;
+  --white:     #ffffff;
+  --green:     #22c55e;
+  --green-dim: #16a34a;
+  --light-sq:  #f0d9b5;
+  --dark-sq:   #b58863;
+  --highlight: #cdd26a;
+  --highlight2:#aaa23a;
+  --shadow:    rgba(0,0,0,0.35);
+  --r:         6px;
+  --r-lg:      8px;
+  --font:      'DM Sans', sans-serif;
+  --mono:      'JetBrains Mono', monospace;
+}
+
+html, body { height: 100%; overflow: hidden; background: var(--bg); }
+
+body {
+  font-family: var(--font);
+  color: var(--text);
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+}
+
+/* ── HEADER ── */
+.header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 0 16px;
+  height: 52px;
+  background: #191919;
+  border-bottom: 1px solid var(--border);
+  flex-shrink: 0;
+  z-index: 10;
+}
+.logo {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 600;
+  font-size: 15px;
+  color: var(--white);
+  letter-spacing: -0.01em;
+  text-decoration: none;
+}
+.logo-icon {
+  width: 28px; height: 28px;
+  background: var(--green);
+  border-radius: 6px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 16px;
+}
+.header-nav {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  margin-left: 8px;
+}
+.header-nav a {
+  display: flex; align-items: center; gap: 6px;
+  padding: 6px 12px;
+  border-radius: var(--r);
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--text-muted);
+  text-decoration: none;
+  transition: background 0.15s, color 0.15s;
+  white-space: nowrap;
+}
+.header-nav a:hover { background: var(--surface3); color: var(--text); }
+.header-nav a.active { background: var(--surface3); color: var(--white); }
+.header-nav a svg { width: 15px; height: 15px; }
+.header-spacer { flex: 1; }
+.header-actions { display: flex; align-items: center; gap: 8px; }
+.btn-green {
+  display: inline-flex; align-items: center; gap: 6px;
+  padding: 7px 14px;
+  background: var(--green);
+  color: #fff;
+  border: none; border-radius: var(--r);
+  font-family: var(--font); font-size: 13px; font-weight: 600;
+  cursor: pointer; transition: background 0.15s;
+}
+.btn-green:hover { background: #1daa50; }
+
+/* ── LAYOUT ── */
+.app-body {
+  display: flex;
+  flex: 1;
+  overflow: hidden;
+  gap: 0;
+}
+
+/* ── SIDEBAR ── */
+.sidebar {
+  width: 220px;
+  flex-shrink: 0;
+  background: #1c1c1c;
+  border-right: 1px solid var(--border);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+.sidebar-top { padding: 8px; flex: 1; }
+.sidebar-logo {
+  display: flex; align-items: center; gap: 10px;
+  padding: 10px 8px 14px;
+}
+.sidebar-logo .logo-icon { width: 32px; height: 32px; font-size: 18px; }
+.sidebar-logo-text { font-size: 15px; font-weight: 600; color: var(--white); }
+.sidebar-logo-sub { font-size: 10px; color: var(--text-dim); letter-spacing: 0.05em; margin-top: 1px; }
+
+.nav-item {
+  display: flex; align-items: center; gap: 10px;
+  padding: 10px 12px;
+  border-radius: var(--r);
+  font-size: 13.5px;
+  font-weight: 500;
+  color: var(--text);
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s;
+  user-select: none;
+  position: relative;
+}
+.nav-item:hover { background: var(--surface3); color: var(--white); }
+.nav-item.active { background: rgba(34,197,94,0.12); color: #4ade80; }
+.nav-item.active .nav-icon { color: #22c55e; }
+.nav-icon {
+  width: 20px; height: 20px;
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
+}
+.nav-icon svg { width: 17px; height: 17px; }
+.nav-badge {
+  margin-left: auto;
+  background: var(--green);
+  color: #fff;
+  font-size: 10px;
+  font-weight: 700;
+  padding: 2px 6px;
+  border-radius: 10px;
+  line-height: 1.4;
+}
+
+.sidebar-divider { height: 1px; background: var(--border); margin: 6px 8px; }
+
+.sidebar-section-label {
+  font-size: 10px;
+  font-weight: 600;
+  color: var(--text-dim);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  padding: 8px 12px 4px;
+}
+
+.sidebar-bottom {
+  border-top: 1px solid var(--border);
+  padding: 10px 8px;
+}
+.user-profile {
+  display: flex; align-items: center; gap: 8px;
+  padding: 6px 8px;
+  border-radius: var(--r);
+  cursor: pointer;
+  transition: background 0.15s;
+}
+.user-profile:hover { background: var(--surface3); }
+.user-avatar {
+  width: 32px; height: 32px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #374151, #4b5563);
+  border: 2px solid #374151;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 12px; font-weight: 700;
+  color: var(--text);
+  flex-shrink: 0;
+  overflow: hidden;
+}
+.user-avatar img { width: 100%; height: 100%; object-fit: cover; }
+.user-info { flex: 1; min-width: 0; }
+.user-name { font-size: 13px; font-weight: 500; color: var(--white); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.user-rating { font-size: 11px; color: var(--text-dim); }
+.user-actions { display: flex; gap: 4px; }
+.icon-btn {
+  width: 28px; height: 28px;
+  border-radius: 5px;
+  background: transparent;
+  border: none;
+  color: var(--text-dim);
+  cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  transition: background 0.15s, color 0.15s;
+}
+.icon-btn:hover { background: var(--surface3); color: var(--text); }
+.icon-btn svg { width: 15px; height: 15px; }
+.notif-dot { position: relative; }
+.notif-dot::after {
+  content: '';
+  position: absolute;
+  top: 4px; right: 4px;
+  width: 6px; height: 6px;
+  background: var(--green);
+  border-radius: 50%;
+  border: 1px solid #1c1c1c;
+}
+
+/* ── CENTER ── */
+.center {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+  min-width: 0;
+  background: var(--bg);
+  gap: 8px;
+}
+
+.player-bar {
+  width: 100%;
+  max-width: 520px;
+  background: var(--surface);
+  border-radius: var(--r-lg);
+  border: 1px solid var(--border);
+  padding: 10px 14px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  box-shadow: 0 2px 8px var(--shadow);
+}
+.player-bar .user-avatar { width: 36px; height: 36px; font-size: 14px; }
+.player-bar-name {
+  flex: 1;
+  min-width: 0;
+}
+.player-bar-name .pname {
+  font-size: 14px; font-weight: 600;
+  color: var(--white);
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.player-bar-name .prating {
+  font-size: 11.5px;
+  color: var(--text-dim);
+}
+.player-flag {
+  font-size: 16px;
+  line-height: 1;
+}
+.player-title {
+  font-size: 10px;
+  font-weight: 700;
+  background: #d97706;
+  color: #fff;
+  padding: 2px 5px;
+  border-radius: 3px;
+  letter-spacing: 0.03em;
+}
+.player-timer {
+  background: #3a3a3a;
+  border-radius: var(--r);
+  padding: 6px 14px;
+  font-family: var(--mono);
+  font-size: 20px;
+  font-weight: 500;
+  color: var(--white);
+  letter-spacing: 0.02em;
+  min-width: 80px;
+  text-align: center;
+  border: 1px solid rgba(255,255,255,0.08);
+}
+.player-timer.active {
+  background: var(--white);
+  color: #1f1f1f;
+  border-color: transparent;
+}
+.captures {
+  display: flex;
+  gap: 2px;
+  align-items: center;
+  font-size: 13px;
+  color: var(--text-dim);
+}
+
+/* ── CHESS BOARD ── */
+.board-wrap {
+  position: relative;
+  user-select: none;
+}
+.board-container {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.board-ranks {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-around;
+  height: var(--board-size, 480px);
+}
+.board-file-row {
+  display: flex;
+  justify-content: space-around;
+  width: var(--board-size, 480px);
+  padding: 0 2px;
+}
+.board-label {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--text-dim);
+  width: 14px;
+  text-align: center;
+  line-height: 1;
+}
+.board {
+  display: grid;
+  grid-template-columns: repeat(8, 1fr);
+  width: var(--board-size, 480px);
+  height: var(--board-size, 480px);
+  border-radius: 4px;
+  overflow: hidden;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.5);
+  border: 2px solid rgba(0,0,0,0.4);
+  flex-shrink: 0;
+}
+.sq {
+  display: flex; align-items: center; justify-content: center;
+  font-size: calc(var(--board-size, 480px) / 8 * 0.72);
+  cursor: pointer;
+  position: relative;
+  transition: filter 0.1s;
+}
+.sq:hover { filter: brightness(1.12); }
+.sq.light { background: var(--light-sq); }
+.sq.dark  { background: var(--dark-sq); }
+.sq.highlight-from { background: var(--highlight) !important; }
+.sq.highlight-to   { background: var(--highlight2) !important; }
+.sq.selected { outline: 3px inset rgba(20,85,255,0.5); }
+.piece { line-height: 1; pointer-events: none; }
+
+/* ── RIGHT PANEL ── */
+.right-panel {
+  width: 320px;
+  flex-shrink: 0;
+  background: var(--panel);
+  border-left: 1px solid var(--border);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+/* Top icon bar */
+.panel-icon-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+  padding: 0 12px;
+  border-bottom: 1px solid var(--border);
+  height: 52px;
+  flex-shrink: 0;
+}
+.panel-icon-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  padding: 8px 12px;
+  border-radius: var(--r);
+  cursor: pointer;
+  transition: background 0.15s;
+  color: var(--text-muted);
+  font-size: 10px;
+}
+.panel-icon-item:hover { background: var(--surface3); color: var(--text); }
+.panel-icon-item.active { color: var(--white); }
+.panel-icon-item svg { width: 18px; height: 18px; }
+
+/* Tabs */
+.panel-tabs {
+  display: flex;
+  align-items: center;
+  border-bottom: 1px solid var(--border);
+  padding: 0 4px;
+  flex-shrink: 0;
+}
+.tab {
+  padding: 12px 16px;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--text-muted);
+  cursor: pointer;
+  border-bottom: 2px solid transparent;
+  margin-bottom: -1px;
+  transition: color 0.15s;
+  white-space: nowrap;
+}
+.tab:hover { color: var(--text); }
+.tab.active { color: var(--white); border-bottom-color: var(--white); }
+
+/* Moves content */
+.panel-content {
+  flex: 1;
+  overflow-y: auto;
+  padding: 12px;
+  scrollbar-width: thin;
+  scrollbar-color: var(--surface3) transparent;
+}
+.panel-content::-webkit-scrollbar { width: 4px; }
+.panel-content::-webkit-scrollbar-thumb { background: var(--surface3); border-radius: 2px; }
+
+.opening-name {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-muted);
+  letter-spacing: 0.03em;
+  margin-bottom: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.opening-name .info-icon {
+  width: 18px; height: 18px;
+  border-radius: 50%;
+  border: 1px solid var(--border2);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 11px; color: var(--text-dim);
+  cursor: pointer;
+}
+
+.move-list { display: table; width: 100%; border-collapse: collapse; }
+.move-row { display: table-row; }
+.move-row:hover .move-num,
+.move-row:hover .move-w,
+.move-row:hover .move-b { background: rgba(255,255,255,0.04); }
+.move-num, .move-w, .move-b {
+  display: table-cell;
+  padding: 4px 6px;
+  font-size: 13px;
+  border-radius: 3px;
+  vertical-align: middle;
+  line-height: 1.5;
+}
+.move-num { color: var(--text-dim); font-size: 12px; width: 28px; text-align: right; padding-right: 8px; }
+.move-w, .move-b { color: var(--text); cursor: pointer; font-family: var(--mono); font-size: 12.5px; }
+.move-w:hover, .move-b:hover { color: var(--white); }
+.move-w.current, .move-b.current {
+  background: var(--surface3);
+  color: var(--white);
+  border-radius: 4px;
+}
+.eval-bar-row {
+  display: flex; align-items: center; gap: 6px;
+  margin-bottom: 8px;
+}
+.eval-label { font-size: 11px; color: var(--text-dim); }
+.eval-bar {
+  flex: 1; height: 4px;
+  background: var(--surface3);
+  border-radius: 2px;
+  overflow: hidden;
+}
+.eval-fill {
+  height: 100%;
+  background: var(--white);
+  width: 52%;
+  border-radius: 2px;
+  transition: width 0.4s ease;
+}
+
+/* Nav controls */
+.nav-controls {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  padding: 10px 12px;
+  border-top: 1px solid var(--border);
+  flex-shrink: 0;
+}
+.nav-btn {
+  width: 44px; height: 44px;
+  border-radius: var(--r);
+  background: var(--surface3);
+  border: 1px solid var(--border);
+  color: var(--text);
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s;
+  flex-shrink: 0;
+}
+.nav-btn:hover { background: #3d3d3d; color: var(--white); }
+.nav-btn:active { background: #424242; }
+.nav-btn svg { width: 16px; height: 16px; }
+.nav-btn.play-btn {
+  background: var(--surface3);
+}
+
+/* Action buttons */
+.action-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 12px 10px;
+  border-top: 1px solid var(--border);
+  flex-shrink: 0;
+}
+.action-btn {
+  flex: 1;
+  display: inline-flex; align-items: center; justify-content: center; gap: 6px;
+  padding: 8px 10px;
+  border-radius: var(--r);
+  border: 1px solid var(--border2);
+  background: transparent;
+  color: var(--text-muted);
+  font-family: var(--font);
+  font-size: 12.5px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s, border-color 0.15s;
+}
+.action-btn:hover { background: var(--surface3); color: var(--text); border-color: rgba(255,255,255,0.15); }
+.action-btn svg { width: 14px; height: 14px; }
+.action-btn.abort:hover { color: #f87171; border-color: rgba(248,113,113,0.3); background: rgba(248,113,113,0.06); }
+.flip-btn {
+  width: 36px; height: 36px;
+  border-radius: var(--r);
+  background: transparent;
+  border: 1px solid var(--border);
+  color: var(--text-dim);
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s;
+  flex-shrink: 0;
+}
+.flip-btn:hover { background: var(--surface3); color: var(--text); }
+.flip-btn svg { width: 14px; height: 14px; }
+
+/* ── AD PANEL ── */
+.ad-panel {
+  width: 180px;
+  flex-shrink: 0;
+  background: #1a1a1a;
+  border-left: 1px solid var(--border);
+  display: flex;
+  flex-direction: column;
+  padding: 16px 12px;
+  gap: 12px;
+  overflow: hidden;
+}
+.ad-badge {
+  font-size: 9px;
+  font-weight: 700;
+  color: var(--text-dim);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  text-align: right;
+}
+.ad-card {
+  background: #222;
+  border-radius: 10px;
+  border: 1px solid rgba(255,255,255,0.06);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+.ad-header {
+  background: #0a3d62;
+  padding: 14px 12px 10px;
+  text-align: center;
+}
+.ad-brand {
+  font-size: 11px; font-weight: 700;
+  color: rgba(255,255,255,0.7);
+  letter-spacing: 0.05em;
+  margin-bottom: 6px;
+}
+.ad-headline {
+  font-size: 22px;
+  font-weight: 700;
+  color: #fff;
+  line-height: 1.15;
+  letter-spacing: -0.02em;
+}
+.ad-headline em { color: var(--green); font-style: normal; }
+.ad-body {
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.ad-feature {
+  display: flex; align-items: center; gap: 6px;
+  font-size: 11px; color: var(--text-muted); line-height: 1.4;
+}
+.ad-feature::before {
+  content: '';
+  width: 5px; height: 5px;
+  background: var(--green);
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+.ad-divider { height: 1px; background: var(--border); }
+.ad-cta {
+  width: 100%;
+  padding: 10px;
+  background: var(--green);
+  color: #fff;
+  border: none;
+  border-radius: var(--r);
+  font-family: var(--font);
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background 0.15s;
+  letter-spacing: 0.01em;
+}
+.ad-cta:hover { background: var(--green-dim); }
+
+.ad-remove {
+  display: flex; align-items: center; justify-content: center; gap: 5px;
+  font-size: 10.5px;
+  color: var(--text-dim);
+  cursor: pointer;
+  transition: color 0.15s;
+  padding: 4px;
+}
+.ad-remove:hover { color: var(--text); }
+.ad-remove svg { width: 11px; height: 11px; }
+
+/* Secondary ad card */
+.ad-mini {
+  background: #1e2d1e;
+  border-radius: 8px;
+  border: 1px solid rgba(34,197,94,0.15);
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: auto;
+}
+.ad-mini-title { font-size: 12px; font-weight: 600; color: var(--white); line-height: 1.3; }
+.ad-mini-sub { font-size: 11px; color: var(--text-dim); }
+.ad-mini-btn {
+  padding: 7px;
+  background: rgba(34,197,94,0.15);
+  border: 1px solid rgba(34,197,94,0.3);
+  border-radius: 5px;
+  color: #4ade80;
+  font-size: 11.5px;
+  font-weight: 600;
+  font-family: var(--font);
+  cursor: pointer;
+  transition: background 0.15s;
+  text-align: center;
+}
+.ad-mini-btn:hover { background: rgba(34,197,94,0.25); }
+
+/* SCROLLBAR RESET */
+* { scrollbar-width: thin; scrollbar-color: #333 transparent; }
+
+/* RESPONSIVE */
+@media (max-width: 1200px) {
+  .ad-panel { display: none; }
+}
+@media (max-width: 900px) {
+  .sidebar { width: 56px; }
+  .sidebar-logo-text, .sidebar-logo-sub,
+  .nav-item span, .nav-badge,
+  .user-info, .sidebar-section-label { display: none; }
+  .nav-item { justify-content: center; padding: 10px; }
+  .user-profile { justify-content: center; }
+  .user-actions { display: none; }
+}
+
+/* Animated timer pulse */
+@keyframes timerPulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.7; }
+}
+.player-timer.active { animation: timerPulse 1s ease-in-out infinite; }
+
+/* Status indicator */
+.status-dot {
+  width: 7px; height: 7px;
+  border-radius: 50%;
+  background: var(--green);
+  flex-shrink: 0;
+  box-shadow: 0 0 6px rgba(34,197,94,0.5);
+}
+</style>
 </head>
 
 <body>
@@ -1990,167 +2697,310 @@
 
   <!-- ════════════════ GAME SCREEN ════════════════ -->
   <div id="sc-game" class="screen">
-    <div class="game-body">
 
-      <!-- ── LEFT SIDEBAR ── -->
-      <div class="game-sidebar-left">
-        <div class="sidebar-section">
-          <div class="logo" style="margin-bottom:.5rem">KIWI CHESS <small>GLOBAL NETWORK</small></div>
-          <div class="sidebar-label">Current Room</div>
-          <div class="sidebar-room-id" id="sidebar-room-display">——</div>
-          <div class="sidebar-badges">
-            <span id="sidebar-fb-badge" class="sbadge green">● FIREBASE</span>
-            <span id="sidebar-mode-badge" class="sbadge">LOCAL</span>
-          </div>
-        </div>
-
-        <div class="sidebar-nav">
-          <div class="snav-item active">
-            <span class="snav-icon">♟</span> Play
-          </div>
-          <div class="snav-item" onclick="show('lobby')">
-            <span class="snav-icon">🏛</span> Lobby
-          </div>
-          <div class="snav-item" onclick="copyLink()">
-            <span class="snav-icon">🔗</span> Share Link
-          </div>
-          <div class="snav-item" onclick="copyPGN()">
-            <span class="snav-icon">📄</span> Export PGN
-          </div>
-          <div class="snav-item" onclick="flipBoard()">
-            <span class="snav-icon">⟳</span> Flip Board
-          </div>
-          <div class="snav-item" onclick="applyRandomTheme()">
-            <span class="snav-icon">🎨</span> Board Theme
-          </div>
-        </div>
-
-        <div id="wait-indicator" class="waiting" style="display:none;padding:.5rem .9rem;border-top:1px solid var(--border)">
-          <div class="dpulse"><span></span><span></span><span></span></div>
-          <span>Waiting for opponent…</span>
-        </div>
-
-        <div class="sidebar-actions">
-          <button class="sidebar-share-btn" onclick="copyLink()">📋 &nbsp;Share Invite Link</button>
-          <button class="sidebar-resign-btn" onclick="resignGame()">⚑ &nbsp;Resign Game</button>
-        </div>
+    <!-- HEADER (index.html layout) -->
+    <header class="header">
+      <a href="#" class="logo">
+        <span class="logo-icon">♟</span>
+        Kiwi Chess
+      </a>
+      <nav class="header-nav">
+        <a href="#" class="active">
+          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M13 2.05V4.07c3.95.49 7 3.85 7 7.93 0 3.21-1.81 6-4.5 7.54L13 17v5h5l-1.22-1.22C19.91 19.07 22 15.76 22 12c0-5.18-3.94-9.45-9-9.95zM11 2.05C5.95 2.55 2 6.82 2 12c0 3.76 2.09 7.07 5.22 8.78L6 22h5V2.05z"/></svg>
+          Play
+        </a>
+        <a href="#" onclick="show('lobby');return false;">
+          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg>
+          Lobby
+        </a>
+        <a href="#" onclick="copyLink();return false;">
+          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M17 7h-4v2h4c1.65 0 3 1.35 3 3s-1.35 3-3 3h-4v2h4c2.76 0 5-2.24 5-5s-2.24-5-5-5zm-6 8H7c-1.65 0-3-1.35-3-3s1.35-3 3-3h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-2zm-3-4h8v2H8z"/></svg>
+          Share
+        </a>
+        <a href="#" onclick="copyPGN();return false;">
+          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M14 2H6c-1.1 0-1.99.9-1.99 2L4 20c0 1.1.89 2 1.99 2H18c1.1 0 2-.9 2-2V8l-6-6zm2 16H8v-2h8v2zm0-4H8v-2h8v2zm-3-5V3.5L18.5 9H13z"/></svg>
+          PGN
+        </a>
+      </nav>
+      <div class="header-spacer"></div>
+      <div class="header-actions" style="display:flex;align-items:center;gap:10px;">
+        <span id="sidebar-room-display" style="font-family:var(--mono,monospace);font-size:12px;font-weight:700;color:var(--gold,#81b64c);letter-spacing:.08em;">——</span>
+        <span id="sidebar-fb-badge" style="font-size:10px;font-weight:700;color:#7dc87d;">● FIREBASE</span>
+        <span id="sidebar-mode-badge" style="font-size:10px;color:#888;display:none;">LOCAL</span>
+        <button class="btn-green" onclick="copyLink()">
+          <svg viewBox="0 0 24 24" fill="currentColor" style="width:14px;height:14px"><path d="M17 7h-4v2h4c1.65 0 3 1.35 3 3s-1.35 3-3 3h-4v2h4c2.76 0 5-2.24 5-5s-2.24-5-5-5zm-6 8H7c-1.65 0-3-1.35-3-3s1.35-3 3-3h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-2zm-3-4h8v2H8z"/></svg>
+          Invite
+        </button>
       </div>
+    </header>
 
-      <!-- ── CENTER: board column ── -->
-      <div class="game-center">
-      <div class="game-left">
+    <!-- APP BODY (index.html layout) -->
+    <div class="app-body">
 
-        <!-- Opponent bar -->
-        <div class="pbar" style="margin-bottom:.3rem">
-          <div style="display:flex;align-items:center;gap:.5rem">
-            <div id="opp-dot" class="pdot" style="background:#1a1a1a"></div>
+      <!-- SIDEBAR (index.html style + website.html nav actions) -->
+      <aside class="sidebar">
+        <div class="sidebar-top">
+          <div class="sidebar-logo">
+            <span class="logo-icon" style="background:var(--green,#22c55e);font-size:18px;">♟</span>
             <div>
-              <div id="opp-name" class="pname">Waiting…</div>
-              <div id="opp-cap" class="pcap"></div>
+              <div class="sidebar-logo-text">Kiwi Chess</div>
+              <div class="sidebar-logo-sub">Global Network</div>
             </div>
           </div>
-          <div style="display:flex;align-items:center;gap:.6rem">
-            <div id="opp-clock" class="clock inactive">—</div>
-            <div id="opp-status" class="pstatus">—</div>
+
+          <div class="nav-item active">
+            <span class="nav-icon"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M13 2.05V4.07c3.95.49 7 3.85 7 7.93 0 3.21-1.81 6-4.5 7.54L13 17v5h5l-1.22-1.22C19.91 19.07 22 15.76 22 12c0-5.18-3.94-9.45-9-9.95zM11 2.05C5.95 2.55 2 6.82 2 12c0 3.76 2.09 7.07 5.22 8.78L6 22h5V2.05z"/></svg></span>
+            <span>Play</span>
+          </div>
+
+          <div class="nav-item" onclick="show('lobby')">
+            <span class="nav-icon"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg></span>
+            <span>Lobby</span>
+          </div>
+
+          <div class="nav-item" onclick="flipBoard()">
+            <span class="nav-icon"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M16 17.01V10h-2v7.01h-3L15 21l4-3.99h-3zM9 3 5 6.99h3V14h2V6.99h3L9 3z"/></svg></span>
+            <span>Flip Board</span>
+          </div>
+
+          <div class="nav-item" onclick="applyRandomTheme()">
+            <span class="nav-icon"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 3c-4.97 0-9 4.03-9 9s4.03 9 9 9c.83 0 1.5-.67 1.5-1.5 0-.39-.15-.74-.39-1.01-.23-.26-.38-.61-.38-.99 0-.83.67-1.5 1.5-1.5H16c2.76 0 5-2.24 5-5 0-4.42-4.03-8-9-8z"/></svg></span>
+            <span>Board Theme</span>
+          </div>
+
+          <div class="sidebar-divider"></div>
+          <div class="sidebar-section-label">Room</div>
+
+          <div class="nav-item" onclick="copyLink()">
+            <span class="nav-icon"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M17 7h-4v2h4c1.65 0 3 1.35 3 3s-1.35 3-3 3h-4v2h4c2.76 0 5-2.24 5-5s-2.24-5-5-5zm-6 8H7c-1.65 0-3-1.35-3-3s1.35-3 3-3h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-2zm-3-4h8v2H8z"/></svg></span>
+            <span>Share Link</span>
+          </div>
+
+          <div class="nav-item" onclick="copyPGN()">
+            <span class="nav-icon"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M14 2H6c-1.1 0-1.99.9-1.99 2L4 20c0 1.1.89 2 1.99 2H18c1.1 0 2-.9 2-2V8l-6-6zm2 16H8v-2h8v2zm0-4H8v-2h8v2zm-3-5V3.5L18.5 9H13z"/></svg></span>
+            <span>Export PGN</span>
           </div>
         </div>
 
-        <!-- Board with outside rank/file labels -->
-        <div class="board-outer">
-          <div class="board-with-ranks">
-            <!-- Rank numbers outside board -->
+        <div class="sidebar-bottom">
+          <div id="wait-indicator" class="waiting" style="display:none;padding:.3rem 0 .6rem">
+            <div class="dpulse"><span></span><span></span><span></span></div>
+            <span style="font-size:.72rem;color:var(--text-dim)">Waiting for opponent…</span>
+          </div>
+          <div class="user-profile" onclick="resignGame()" title="Resign game" style="cursor:pointer;">
+            <div class="user-avatar" id="my-avatar" style="background:linear-gradient(135deg,#374151,#4b5563);border-color:#374151;">♙</div>
+            <div class="user-info">
+              <div class="user-name" id="my-name">You</div>
+              <div class="user-rating" id="my-cap"></div>
+            </div>
+            <div class="user-actions">
+              <button class="icon-btn" title="Resign" onclick="resignGame();event.stopPropagation()">
+                <svg viewBox="0 0 24 24" fill="currentColor"><path d="M20.5 3l-.16.03L15 5.1 9 3 3.36 4.9c-.21.07-.36.25-.36.48V20.5c0 .28.22.5.5.5l.16-.03L9 18.9l6 2.1 5.64-1.9c.21-.07.36-.25.36-.48V3.5c0-.28-.22-.5-.5-.5z"/></svg>
+              </button>
+            </div>
+          </div>
+        </div>
+      </aside>
+
+      <!-- CENTER: board + player bars (index.html layout style) -->
+      <main class="center" id="center">
+
+        <!-- Opponent bar (top) -->
+        <div class="player-bar" id="bar-top">
+          <div class="user-avatar" style="background:linear-gradient(135deg,#1e3a5f,#2563eb)">
+            <div id="opp-dot" class="pdot" style="width:8px;height:8px;border-radius:50%;background:#1a1a1a;flex-shrink:0;"></div>
+          </div>
+          <div class="player-bar-name">
+            <div class="pname" id="opp-name">Waiting…</div>
+            <div class="prating"><span id="opp-cap"></span></div>
+          </div>
+          <div style="margin-left:auto;display:flex;align-items:center;gap:8px;">
+            <div id="opp-status" class="pstatus">—</div>
+            <div class="player-timer" id="opp-clock">—</div>
+          </div>
+        </div>
+
+        <!-- Board (website.html board structure preserved) -->
+        <div class="board-outer" style="flex:1;display:flex;flex-direction:column;min-height:0;min-width:0;width:100%;overflow:hidden;align-items:stretch;padding:.2rem 0;">
+          <div class="board-with-ranks" style="display:flex;flex-direction:row;align-items:stretch;flex:1;min-height:0;min-width:0;width:100%;justify-content:center;">
             <div class="rank-labels" id="rank-labels">
-              <div class="rank-label">8</div>
-              <div class="rank-label">7</div>
-              <div class="rank-label">6</div>
-              <div class="rank-label">5</div>
-              <div class="rank-label">4</div>
-              <div class="rank-label">3</div>
-              <div class="rank-label">2</div>
-              <div class="rank-label">1</div>
+              <div class="rank-label">8</div><div class="rank-label">7</div>
+              <div class="rank-label">6</div><div class="rank-label">5</div>
+              <div class="rank-label">4</div><div class="rank-label">3</div>
+              <div class="rank-label">2</div><div class="rank-label">1</div>
             </div>
             <div class="board-wrap">
               <div id="board" class="board"></div>
             </div>
           </div>
-          <!-- File letters outside board -->
           <div class="file-labels" id="file-labels">
-            <div class="file-label">a</div>
-            <div class="file-label">b</div>
-            <div class="file-label">c</div>
-            <div class="file-label">d</div>
-            <div class="file-label">e</div>
-            <div class="file-label">f</div>
-            <div class="file-label">g</div>
-            <div class="file-label">h</div>
+            <div class="file-label">a</div><div class="file-label">b</div>
+            <div class="file-label">c</div><div class="file-label">d</div>
+            <div class="file-label">e</div><div class="file-label">f</div>
+            <div class="file-label">g</div><div class="file-label">h</div>
           </div>
         </div>
 
-        <!-- My bar -->
-        <div class="pbar" style="margin-top:.3rem">
-          <div style="display:flex;align-items:center;gap:.5rem">
-            <div id="my-dot" class="pdot" style="background:#f0f0f0"></div>
-            <div class="pavatar" id="my-avatar" style="border-color:var(--gold);color:var(--gold)">♙</div>
-            <div>
-              <div id="my-name" class="pname">You</div>
-              <div id="my-cap" class="pcap"></div>
-            </div>
+        <!-- My bar (bottom) -->
+        <div class="player-bar" id="bar-bottom">
+          <div class="user-avatar" style="background:linear-gradient(135deg,#374151,#6b7280)">♙</div>
+          <div class="player-bar-name">
+            <div class="pname" id="lby-pname">You</div>
+            <div class="prating"><span id="my-cap"></span></div>
           </div>
-          <div style="display:flex;align-items:center;gap:.55rem">
+          <div style="margin-left:auto;display:flex;align-items:center;gap:8px;">
             <div id="my-status" class="pstatus on">YOUR TURN</div>
-            <div id="my-clock" class="clock active">—</div>
+            <div class="player-timer active" id="my-clock">—</div>
           </div>
         </div>
 
-        <div class="status-bar" style="border:1px solid var(--border);border-radius:4px;margin-top:.25rem">
-          <div id="stext" class="stext">Game starting…</div>
+        <div class="status-bar" style="width:100%;max-width:520px;background:var(--surface2,#272722);border:1px solid var(--border,#3d3a36);border-radius:4px;padding:.3rem .7rem;margin-top:4px;">
+          <div id="stext" class="stext" style="font-size:.78rem;color:var(--text-dim,#8a8480);">Game starting…</div>
         </div>
-      </div>
-      </div><!-- /game-center -->
 
-      <!-- Right: panel -->
-      <div class="game-right">
-        <!-- Compact info strip -->
-        <div style="background:#1a1917;border-bottom:1px solid var(--border);padding:.5rem .8rem;display:flex;align-items:center;justify-content:space-between;flex-shrink:0;gap:.4rem">
-          <div style="display:flex;align-items:center;gap:.5rem;min-width:0">
-            <div style="font-family:var(--fn);font-size:.62rem;font-weight:700;letter-spacing:.1em;color:var(--text-dim);text-transform:uppercase;white-space:nowrap">Moves</div>
-            <span id="move-count" style="font-family:var(--fm);font-weight:700;font-size:.78rem;color:var(--gold)">0</span>
+      </main>
+
+      <!-- RIGHT PANEL (index.html layout + website.html content) -->
+      <aside class="right-panel">
+
+        <!-- Icon bar -->
+        <div class="panel-icon-bar">
+          <div class="panel-icon-item active" title="Moves">
+            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M13 2.05V4.07c3.95.49 7 3.85 7 7.93 0 3.21-1.81 6-4.5 7.54L13 17v5h5l-1.22-1.22C19.91 19.07 22 15.76 22 12c0-5.18-3.94-9.45-9-9.95zM11 2.05C5.95 2.55 2 6.82 2 12c0 3.76 2.09 7.07 5.22 8.78L6 22h5V2.05z"/></svg>
+            Moves
           </div>
-          <div style="display:flex;align-items:center;gap:.35rem;flex-shrink:0">
-            <span id="theme-badge" style="font-family:var(--fn);font-weight:700;font-size:.62rem;color:var(--text-dim)">Tournament</span>
-            <label style="display:flex;align-items:center;gap:.2rem;margin:0;padding:0;font-family:var(--fn);font-weight:600;font-size:.68rem;color:var(--text-dim);cursor:pointer;white-space:nowrap" title="Notify moves">
-              <input type="checkbox" id="notify-moves" style="margin:0;padding:0;width:auto">notify
+          <div class="panel-icon-item" title="Chat" onclick="switchTab(document.querySelectorAll('.tab')[1],'chat')">
+            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2z"/></svg>
+            Chat
+          </div>
+          <div class="panel-icon-item" title="Info" onclick="switchTab(document.querySelectorAll('.tab')[2],'info')">
+            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/></svg>
+            Info
+          </div>
+          <div class="panel-icon-item" title="Theme" onclick="applyRandomTheme()">
+            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 3c-4.97 0-9 4.03-9 9s4.03 9 9 9c.83 0 1.5-.67 1.5-1.5 0-.39-.15-.74-.39-1.01-.23-.26-.38-.61-.38-.99 0-.83.67-1.5 1.5-1.5H16c2.76 0 5-2.24 5-5 0-4.42-4.03-8-9-8z"/></svg>
+            Theme
+          </div>
+        </div>
+
+        <!-- Tabs -->
+        <div class="panel-tabs">
+          <div class="tab active" onclick="switchTab(this,'moves')">Moves</div>
+          <div class="tab" onclick="switchTab(this,'chat')">Chat</div>
+          <div class="tab" onclick="switchTab(this,'info')">Info</div>
+        </div>
+
+        <!-- Move count header -->
+        <div style="background:#1a1917;border-bottom:1px solid var(--border,#3d3a36);padding:.45rem .8rem;display:flex;align-items:center;justify-content:space-between;flex-shrink:0;gap:.4rem;">
+          <div style="display:flex;align-items:center;gap:.5rem;">
+            <span style="font-size:.62rem;font-weight:700;letter-spacing:.1em;color:var(--text-dim,#8a8480);text-transform:uppercase;white-space:nowrap;">Moves</span>
+            <span id="move-count" style="font-weight:700;font-size:.78rem;color:var(--green,#22c55e);">0</span>
+          </div>
+          <div style="display:flex;align-items:center;gap:.4rem;flex-shrink:0;">
+            <span id="theme-badge" style="font-size:.62rem;font-weight:700;color:var(--text-dim,#8a8480);">Tournament</span>
+            <label style="display:flex;align-items:center;gap:.2rem;margin:0;padding:0;font-size:.68rem;color:var(--text-dim,#8a8480);cursor:pointer;white-space:nowrap;" title="Notify moves">
+              <input type="checkbox" id="notify-moves" style="margin:0;padding:0;width:auto;">notify
             </label>
           </div>
         </div>
 
-        <!-- Move History — fills all remaining space -->
-        <div class="mhist">
-          <div id="mlist" class="mlist"><span style="color:var(--text-dim);font-style:italic">No moves yet</span></div>
-        </div>
-
-        <!-- Game Control Buttons -->
-        <div class="game-controls">
-          <button class="ctrl-btn danger" onclick="resignGame()" title="Resign game" id="btn-resign">🏳 Resign</button>
-          <button class="ctrl-btn" onclick="offerDraw()" title="Offer draw" id="btn-draw">🤝 Draw</button>
-          <button class="ctrl-btn" onclick="flipBoard()" title="Flip board" id="btn-flip">⟳ Flip</button>
-          <button class="ctrl-btn" onclick="copyPGN()" title="Export PGN">📄 PGN</button>
-        </div>
-
-        <!-- Chat — fixed at bottom -->
-        <div class="chat">
-          <div id="chat-msgs" class="chat-msgs"><span class="cm-sys">Game chat</span></div>
-          <div class="chat-row">
-            <input id="chat-in" class="chat-in" type="text" placeholder="Message…" maxlength="80"
-              onkeydown="if(event.key==='Enter')sendChat()">
-            <button class="chat-send" onclick="sendChat()">SEND</button>
+        <!-- Moves panel -->
+        <div class="panel-content" id="panel-moves">
+          <div class="opening-name">
+            <span id="stext-opening">—</span>
+          </div>
+          <div class="mhist" style="flex:1;overflow-y:auto;min-height:0;">
+            <div id="mlist" class="mlist"><span style="color:var(--text-dim,#8a8480);font-style:italic">No moves yet</span></div>
           </div>
         </div>
-      </div>
-    </div>
-  </div>
 
-  <!-- Promotion Modal -->
+        <!-- Chat panel -->
+        <div class="panel-content" id="panel-chat" style="display:none;flex-direction:column;flex:1;min-height:0;">
+          <div id="chat-msgs" class="chat-msgs" style="flex:1;overflow-y:auto;min-height:0;padding:.5rem .8rem;"><span class="cm-sys">Game chat</span></div>
+          <div class="chat-row" style="display:flex;gap:.4rem;padding:.5rem .7rem;border-top:1px solid var(--border,#3d3a36);flex-shrink:0;">
+            <input id="chat-in" class="chat-in" type="text" placeholder="Message…" maxlength="80"
+              onkeydown="if(event.key==='Enter')sendChat()" style="flex:1;margin:0;padding:.4rem .6rem;font-size:.8rem;border-radius:4px;">
+            <button class="chat-send" onclick="sendChat()" style="padding:.4rem .8rem;font-size:.75rem;font-weight:700;background:var(--green,#22c55e);color:#fff;border:none;border-radius:4px;cursor:pointer;">SEND</button>
+          </div>
+        </div>
+
+        <!-- Info panel -->
+        <div class="panel-content" id="panel-info" style="display:none;">
+          <div style="color:var(--text-dim,#8a8480);font-size:13px;">
+            <div style="margin-bottom:8px;font-weight:600;color:var(--text,#dbd7d2);">Game Info</div>
+            <div style="margin-bottom:4px;">Room: <span style="color:var(--green,#22c55e);" id="info-room-id">——</span></div>
+            <div style="margin-bottom:4px;">Mode: <span style="color:var(--text,#dbd7d2);" id="sidebar-mode-badge2">—</span></div>
+            <div style="margin-bottom:4px;">Theme: <span style="color:var(--text,#dbd7d2);" id="info-theme">Tournament</span></div>
+          </div>
+        </div>
+
+        <!-- Nav controls -->
+        <div class="nav-controls">
+          <button class="nav-btn" title="Resign" onclick="resignGame()">
+            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M20.5 3l-.16.03L15 5.1 9 3 3.36 4.9c-.21.07-.36.25-.36.48V20.5c0 .28.22.5.5.5l.16-.03L9 18.9l6 2.1 5.64-1.9c.21-.07.36-.25.36-.48V3.5c0-.28-.22-.5-.5-.5z"/></svg>
+          </button>
+          <button class="nav-btn" title="Offer draw" onclick="offerDraw()">
+            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M20 6h-2.18c.07-.44.18-.88.18-1.35C18 2.07 15.93 0 13.35 0c-1.33 0-2.52.58-3.35 1.48L9 3 7.99 1.48C7.17.58 5.98 0 4.65 0 2.07 0 0 2.07 0 4.65c0 .47.1.91.18 1.35H2c-.55 0-1 .45-1 1v2c0 .55.45 1 1 1h18c.55 0 1-.45 1-1V7c0-.55-.45-1-1-1z"/></svg>
+          </button>
+          <button class="nav-btn" title="Flip board" onclick="flipBoard()">
+            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M16 17.01V10h-2v7.01h-3L15 21l4-3.99h-3zM9 3 5 6.99h3V14h2V6.99h3L9 3z"/></svg>
+          </button>
+          <button class="nav-btn" title="Export PGN" onclick="copyPGN()">
+            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M14 2H6c-1.1 0-1.99.9-1.99 2L4 20c0 1.1.89 2 1.99 2H18c1.1 0 2-.9 2-2V8l-6-6zm2 16H8v-2h8v2zm0-4H8v-2h8v2zm-3-5V3.5L18.5 9H13z"/></svg>
+          </button>
+          <button class="nav-btn" title="Share link" onclick="copyLink()">
+            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M17 7h-4v2h4c1.65 0 3 1.35 3 3s-1.35 3-3 3h-4v2h4c2.76 0 5-2.24 5-5s-2.24-5-5-5zm-6 8H7c-1.65 0-3-1.35-3-3s1.35-3 3-3h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-2zm-3-4h8v2H8z"/></svg>
+          </button>
+        </div>
+
+        <!-- Action row -->
+        <div class="action-row">
+          <button class="action-btn" onclick="resignGame()" title="Resign">
+            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M20.5 3l-.16.03L15 5.1 9 3 3.36 4.9c-.21.07-.36.25-.36.48V20.5c0 .28.22.5.5.5l.16-.03L9 18.9l6 2.1 5.64-1.9c.21-.07.36-.25.36-.48V3.5c0-.28-.22-.5-.5-.5z"/></svg>
+            Resign
+          </button>
+          <button class="action-btn" onclick="offerDraw()" title="Offer draw">
+            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M20 6h-2.18c.07-.44.18-.88.18-1.35C18 2.07 15.93 0 13.35 0c-1.33 0-2.52.58-3.35 1.48L9 3 7.99 1.48C7.17.58 5.98 0 4.65 0 2.07 0 0 2.07 0 4.65c0 .47.1.91.18 1.35H2c-.55 0-1 .45-1 1v2c0 .55.45 1 1 1h18c.55 0 1-.45 1-1V7c0-.55-.45-1-1-1z"/></svg>
+            ½ Draw
+          </button>
+          <button class="flip-btn" onclick="flipBoard()" title="Flip board">
+            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M16 17.01V10h-2v7.01h-3L15 21l4-3.99h-3zM9 3 5 6.99h3V14h2V6.99h3L9 3z"/></svg>
+          </button>
+        </div>
+
+      </aside>
+
+      <!-- AD PANEL (from index.html) -->
+      <div class="ad-panel">
+        <div class="ad-badge">Advertisement</div>
+        <div class="ad-card">
+          <div class="ad-header">
+            <div class="ad-brand">Kiwi Chess Premium</div>
+            <div class="ad-headline">Play Chess <em>Anywhere</em> with <em>Zero Lag</em></div>
+          </div>
+          <div class="ad-body">
+            <div class="ad-feature">Firebase real-time sync</div>
+            <div class="ad-feature">Board themes & customization</div>
+            <div class="ad-feature">Discord bot integration</div>
+            <div class="ad-divider"></div>
+            <button class="ad-cta" onclick="copyLink()">Share a Game →</button>
+          </div>
+        </div>
+        <div class="ad-mini">
+          <div class="ad-mini-title">Export Your Game</div>
+          <div class="ad-mini-sub">Download PGN to analyze in any chess tool</div>
+          <button class="ad-mini-btn" onclick="copyPGN()">Export PGN →</button>
+        </div>
+        <div class="ad-remove" onclick="this.parentElement.style.display='none'">
+          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.47 2 2 6.47 2 12s4.47 10 10 10 10-4.47 10-10S17.53 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm3.59-13L12 10.59 8.41 7 7 8.41 10.59 12 7 15.59 8.41 17 12 13.41 15.59 17 17 15.59 13.41 12 17 8.41 15.59 7z"/></svg>
+          Dismiss
+        </div>
+      </div>
+
+    </div><!-- /app-body -->
+  </div><!-- /sc-game -->
+
+<!-- Promotion Modal -->
   <div id="promo-modal" class="modal-bg">
     <div class="modal">
       <h3>Promote Pawn</h3>
