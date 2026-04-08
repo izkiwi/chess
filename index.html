@@ -2790,8 +2790,8 @@ body {
           <div class="user-profile" onclick="resignGame()" title="Resign game" style="cursor:pointer;">
             <div class="user-avatar" id="my-avatar" style="background:linear-gradient(135deg,#374151,#4b5563);border-color:#374151;">♙</div>
             <div class="user-info">
-              <div class="user-name" id="my-name">You</div>
-              <div class="user-rating" id="my-cap"></div>
+              <div class="user-name" id="sidebar-my-name">You</div>
+              <div class="user-rating"></div>
             </div>
             <div class="user-actions">
               <button class="icon-btn" title="Resign" onclick="resignGame();event.stopPropagation()">
@@ -2807,8 +2807,9 @@ body {
 
         <!-- Opponent bar (top) -->
         <div class="player-bar" id="bar-top">
-          <div class="user-avatar" style="background:linear-gradient(135deg,#1e3a5f,#2563eb)">
-            <div id="opp-dot" class="pdot" style="width:8px;height:8px;border-radius:50%;background:#1a1a1a;flex-shrink:0;"></div>
+          <div class="user-avatar" style="background:linear-gradient(135deg,#1e3a5f,#2563eb);position:relative;">
+            <div id="opp-dot" style="position:absolute;bottom:1px;right:1px;width:8px;height:8px;border-radius:50%;background:#1a1a1a;border:1px solid #1c1c1c;"></div>
+            ♞
           </div>
           <div class="player-bar-name">
             <div class="pname" id="opp-name">Waiting…</div>
@@ -2843,9 +2844,12 @@ body {
 
         <!-- My bar (bottom) -->
         <div class="player-bar" id="bar-bottom">
-          <div class="user-avatar" style="background:linear-gradient(135deg,#374151,#6b7280)">♙</div>
+          <div class="user-avatar" style="background:linear-gradient(135deg,#374151,#6b7280);position:relative;">
+            <div id="my-dot" style="position:absolute;bottom:1px;right:1px;width:8px;height:8px;border-radius:50%;background:#f0f0f0;border:1px solid #1c1c1c;"></div>
+            ♙
+          </div>
           <div class="player-bar-name">
-            <div class="pname" id="lby-pname">You</div>
+            <div class="pname" id="my-name">You</div>
             <div class="prating"><span id="my-cap"></span></div>
           </div>
           <div style="margin-left:auto;display:flex;align-items:center;gap:8px;">
