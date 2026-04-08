@@ -6,27 +6,31 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>KIWI CHESS — Global Network</title>
   <link
-    href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600&display=swap"
+    href="https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700;900&family=Roboto+Mono:wght@400;500;700&display=swap"
     rel="stylesheet">
   <script src="https://cdn.jsdelivr.net/npm/chess.js@0.10.3/chess.min.js"></script>
   <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
   <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
   <style>
     :root {
-      --bg: #1a1d22;
-      --surface: #272b34;
-      --surface2: #2e3440;
-      --border: #3a4050;
-      --gold: #5d9b4a;
-      --gold-dim: #3d6e30;
-      --gold-glow: rgba(93, 155, 74, 0.15);
-      --text: #e8e8e8;
-      --text-dim: #7a8090;
-      --light-sq: #eeeed2;
-      --dark-sq: #769656;
-      --fn: 'Nunito', sans-serif;
-      --fb: 'Nunito', sans-serif;
-      --fm: 'JetBrains Mono', monospace;
+      --bg: #21201d;
+      --surface: #272522;
+      --surface2: #1e1d1b;
+      --surface3: #302e2b;
+      --border: #3d3a36;
+      --gold: #81b64c;
+      --gold-dim: #5e8a35;
+      --gold-glow: rgba(129, 182, 76, 0.18);
+      --text: #dbd7d2;
+      --text-dim: #8a8480;
+      --text-bright: #f0ece8;
+      --light-sq: #f0d9b5;
+      --dark-sq: #b58863;
+      --red: #c62828;
+      --red-dim: #8b1a1a;
+      --fn: 'Lato', sans-serif;
+      --fb: 'Lato', sans-serif;
+      --fm: 'Roboto Mono', monospace;
     }
 
     * {
@@ -46,9 +50,7 @@
       color: var(--text);
       font-family: var(--fb);
       display: flex;
-      flex-direction: column;
-      height: 100%;
-      overflow: hidden
+      flex-direction: column
     }
 
     /* Background subtle pattern */
@@ -56,8 +58,8 @@
       content: '';
       position: fixed;
       inset: 0;
-      background: radial-gradient(ellipse 60% 40% at 15% 60%, rgba(93, 155, 74, .04) 0%, transparent 70%),
-        radial-gradient(ellipse 40% 60% at 85% 20%, rgba(93, 155, 74, .03) 0%, transparent 70%);
+      background: radial-gradient(ellipse 60% 40% at 15% 60%, rgba(129, 182, 76, .03) 0%, transparent 70%),
+        radial-gradient(ellipse 40% 60% at 85% 20%, rgba(181, 136, 99, .02) 0%, transparent 70%);
       pointer-events: none;
       z-index: 0
     }
@@ -69,8 +71,7 @@
       height: 100%;
       position: relative;
       z-index: 1;
-      overflow: hidden;
-      flex: 1
+      overflow: hidden
     }
 
     .screen.active {
@@ -82,28 +83,29 @@
       display: flex;
       align-items: center;
       justify-content: space-between;
-      padding: .75rem 1.5rem;
+      padding: .6rem 1.25rem;
       border-bottom: 1px solid var(--border);
-      background: var(--surface);
+      background: #1a1917;
       flex-shrink: 0
     }
 
     .logo {
       font-family: var(--fn);
       font-weight: 900;
-      font-size: 1.15rem;
-      letter-spacing: .04em;
+      font-size: 1.1rem;
+      letter-spacing: .02em;
       color: var(--gold);
       text-shadow: none
     }
 
     .logo small {
       display: block;
-      font-size: .62rem;
-      letter-spacing: .08em;
+      font-size: .58rem;
+      letter-spacing: .1em;
       color: var(--text-dim);
-      font-weight: 600;
-      margin-top: 1px
+      font-weight: 700;
+      margin-top: 1px;
+      text-transform: uppercase
     }
 
     .hdr-right {
@@ -112,77 +114,82 @@
       gap: .75rem
     }
 
-    /* BUTTONS — Chess.com inspired */
+    /* BUTTONS — Chess.com style */
     .btn {
       display: inline-flex;
       align-items: center;
       justify-content: center;
       gap: .4rem;
-      padding: .6rem 1.2rem;
+      padding: .65rem 1.4rem;
       font-family: var(--fn);
-      font-size: .75rem;
+      font-size: .82rem;
       font-weight: 700;
-      letter-spacing: .02em;
+      letter-spacing: .01em;
       text-transform: none;
       border: none;
-      border-radius: 8px;
+      border-radius: 4px;
       cursor: pointer;
       background: transparent;
-      transition: all .15s ease;
+      transition: all .12s ease;
       white-space: nowrap
     }
 
     .btn-g {
       border: none;
       color: #fff;
-      background: var(--gold)
+      background: var(--gold);
+      border-bottom: 3px solid var(--gold-dim)
     }
 
     .btn-g:hover {
-      background: #4e8c3e;
+      background: #8ec255;
       color: #fff;
-      box-shadow: 0 4px 14px rgba(93,155,74,.4)
+      border-bottom-color: #5e8a35
+    }
+
+    .btn-g:active {
+      transform: translateY(1px);
+      border-bottom-width: 2px
     }
 
     .btn-s {
       border: 1px solid var(--border);
-      color: var(--text-dim);
-      background: var(--surface2)
+      color: var(--text);
+      background: var(--surface3)
     }
 
     .btn-s:hover {
       border-color: var(--text-dim);
-      color: var(--text);
-      background: rgba(255,255,255,.06)
+      color: var(--text-bright);
+      background: #3a3835
     }
 
     .btn-r {
       border: none;
       color: #fff;
-      background: #c44
+      background: var(--red);
+      border-bottom: 3px solid var(--red-dim)
     }
 
     .btn-r:hover {
-      background: #a33;
-      color: #fff;
-      box-shadow: 0 4px 14px rgba(180,40,40,.3)
+      background: #d32f2f;
+      color: #fff
     }
 
     .btn-sm {
-      padding: .3rem .65rem;
-      font-size: .58rem;
-      border-radius: 5px
+      padding: .3rem .7rem;
+      font-size: .72rem;
+      border-radius: 3px
     }
 
     /* Game control buttons row */
     .game-controls {
       display: flex;
-      gap: .4rem;
-      flex-wrap: wrap;
-      padding: .5rem .55rem;
-      background: var(--surface);
+      gap: 0;
+      flex-wrap: nowrap;
+      padding: 0;
+      background: var(--surface2);
       border-top: 1px solid var(--border);
-      border-bottom: 1px solid var(--border);
       flex-shrink: 0
     }
 
@@ -191,41 +198,44 @@
       display: inline-flex;
       align-items: center;
       justify-content: center;
-      gap: .3rem;
-      padding: .5rem .4rem;
+      gap: .28rem;
+      padding: .65rem .3rem;
       font-family: var(--fn);
       font-size: .72rem;
-      font-weight: 600;
+      font-weight: 700;
       letter-spacing: 0;
-      border: 1px solid var(--border);
-      border-radius: 8px;
+      border: none;
+      border-right: 1px solid var(--border);
+      border-radius: 0;
       cursor: pointer;
       background: var(--surface2);
       color: var(--text-dim);
-      transition: all .15s;
+      transition: all .12s;
       white-space: nowrap;
       text-transform: none
     }
 
+    .ctrl-btn:last-child {
+      border-right: none
+    }
+
     .ctrl-btn:hover {
-      border-color: var(--gold-dim);
-      color: var(--text);
-      background: rgba(93,155,74,.07)
+      background: var(--surface3);
+      color: var(--text)
     }
 
     .ctrl-btn.danger:hover {
-      border-color: #8b2020;
-      color: #e05;
-      background: rgba(180,32,32,.1)
+      background: rgba(198, 40, 40, .15);
+      color: #ef5350
     }
 
     /* INPUTS */
     label {
       display: block;
       font-family: var(--fn);
-      font-size: .72rem;
+      font-size: .75rem;
       font-weight: 700;
-      letter-spacing: .03em;
+      letter-spacing: .02em;
       color: var(--text-dim);
       margin-bottom: .35rem;
       text-transform: none
@@ -238,9 +248,9 @@
       background: var(--surface2);
       border: 1px solid var(--border);
       color: var(--text);
-      padding: .55rem .75rem;
+      padding: .6rem .8rem;
       font-family: var(--fn);
-      font-size: .82rem;
+      font-size: .85rem;
       font-weight: 500;
       border-radius: 8px;
       outline: none;
@@ -281,9 +291,9 @@
 
     .card-title {
       font-family: var(--fn);
-      font-size: .78rem;
-      font-weight: 800;
-      letter-spacing: .03em;
+      font-size: .82rem;
+      font-weight: 900;
+      letter-spacing: .02em;
       color: var(--gold);
       margin-bottom: 1.25rem;
       text-transform: none
@@ -296,13 +306,14 @@
     }
 
     .info-note {
-      background: rgba(93, 155, 74, .07);
-      border-left: 2px solid var(--gold-dim);
+      background: rgba(129, 182, 76, .07);
+      border-left: 3px solid var(--gold-dim);
       padding: .65rem .9rem;
-      font-size: .78rem;
+      font-size: .82rem;
       color: var(--text-dim);
       margin: .5rem 0 1rem;
-      line-height: 1.5
+      line-height: 1.5;
+      border-radius: 0 4px 4px 0
     }
 
     /* TABS */
@@ -313,16 +324,16 @@
     }
 
     .tab {
-      padding: .55rem .9rem;
+      padding: .6rem 1rem;
       font-family: var(--fn);
-      font-size: .75rem;
+      font-size: .8rem;
       font-weight: 700;
       letter-spacing: 0;
       text-transform: none;
       cursor: pointer;
       color: var(--text-dim);
       border-bottom: 2px solid transparent;
-      transition: all .15s
+      transition: all .12s
     }
 
     .tab.active {
@@ -350,20 +361,21 @@
 
     .setup-logo h1 {
       font-family: var(--fn);
-      font-size: 2.2rem;
+      font-size: 2.4rem;
       font-weight: 900;
-      letter-spacing: .04em;
+      letter-spacing: .02em;
       color: var(--gold);
       text-shadow: none
     }
 
     .setup-logo p {
       font-family: var(--fn);
-      font-size: .72rem;
-      font-weight: 600;
-      letter-spacing: .08em;
+      font-size: .75rem;
+      font-weight: 700;
+      letter-spacing: .1em;
       color: var(--text-dim);
-      margin-top: .4rem
+      margin-top: .4rem;
+      text-transform: uppercase
     }
 
     /* LOBBY — LOADING MATCH */
@@ -405,8 +417,8 @@
       position: relative;
       width: min(380px, 78vw);
       height: min(380px, 78vw);
-      border: 2px solid rgba(93, 155, 74, .4);
-      box-shadow: 0 0 60px rgba(93, 155, 74, .2), 0 0 120px rgba(93, 155, 74, .08);
+      border: 3px solid rgba(181, 136, 99, .5);
+      box-shadow: 0 0 50px rgba(181, 136, 99, .25), 0 0 100px rgba(129, 182, 76, .08);
       overflow: hidden;
       flex-shrink: 0
     }
@@ -441,19 +453,20 @@
       font-family: var(--fn);
       font-size: clamp(1.6rem, 5vw, 2.6rem);
       font-weight: 900;
-      letter-spacing: .04em;
+      letter-spacing: .02em;
       color: var(--gold);
-      text-shadow: 0 0 50px rgba(93, 155, 74, .5), 0 2px 12px rgba(0, 0, 0, .8);
+      text-shadow: 0 0 50px rgba(129, 182, 76, .45), 0 2px 12px rgba(0, 0, 0, .8);
       text-transform: none
     }
 
     .lm-above-sub {
       font-family: var(--fn);
       font-size: clamp(.6rem, 1.5vw, .72rem);
-      font-weight: 600;
-      letter-spacing: .1em;
-      color: rgba(93, 155, 74, .75);
-      margin-top: .25rem
+      font-weight: 700;
+      letter-spacing: .12em;
+      color: rgba(129, 182, 76, .7);
+      margin-top: .25rem;
+      text-transform: uppercase
     }
 
     .lm-center {
@@ -466,11 +479,11 @@
 
     .lm-title {
       font-family: var(--fn);
-      font-size: clamp(.75rem, 2vw, .9rem);
-      font-weight: 800;
-      letter-spacing: .04em;
-      color: var(--gold);
-      text-transform: none;
+      font-size: clamp(.78rem, 2vw, .95rem);
+      font-weight: 900;
+      letter-spacing: .08em;
+      color: var(--text-dim);
+      text-transform: uppercase;
       text-shadow: none
     }
 
@@ -620,30 +633,26 @@
 
     /* GAME SCREEN */
     #sc-game {
-      overflow: hidden;
-      height: 100%;
-      display: flex;
-      flex-direction: column
+      overflow: hidden
     }
 
     .game-body {
       flex: 1;
       display: grid;
-      grid-template-columns: 150px 1fr 260px;
+      grid-template-columns: 160px 1fr 240px;
       grid-template-rows: 1fr;
       gap: 0;
       padding: 0;
       overflow: hidden;
       height: 100%;
-      min-height: 0;
-      max-height: 100%
+      min-height: 0
     }
 
     /* LEFT SIDEBAR — Chess.com style nav panel */
     .game-sidebar-left {
       display: flex;
       flex-direction: column;
-      background: var(--surface);
+      background: #1a1917;
       border-right: 1px solid var(--border);
       overflow: hidden;
       height: 100%;
@@ -651,95 +660,95 @@
     }
 
     .sidebar-section {
-      padding: .6rem .7rem;
+      padding: .75rem .8rem;
       border-bottom: 1px solid var(--border)
     }
 
     .sidebar-label {
       font-family: var(--fn);
-      font-size: .65rem;
+      font-size: .62rem;
       font-weight: 700;
-      letter-spacing: .06em;
+      letter-spacing: .08em;
       color: var(--text-dim);
       text-transform: uppercase;
-      margin-bottom: .6rem
+      margin-bottom: .5rem
     }
 
     .sidebar-room-id {
-      font-family: var(--fn);
-      font-size: 1.1rem;
-      font-weight: 900;
+      font-family: var(--fm);
+      font-size: 1rem;
+      font-weight: 700;
       letter-spacing: .06em;
       color: var(--gold)
     }
 
     .sidebar-badges {
       display: flex;
-      gap: .4rem;
-      margin-top: .4rem;
+      gap: .35rem;
+      margin-top: .45rem;
       flex-wrap: wrap
     }
 
     .sbadge {
       font-family: var(--fn);
-      font-size: .6rem;
+      font-size: .58rem;
       font-weight: 700;
       letter-spacing: .02em;
-      padding: .18rem .5rem;
-      border-radius: 6px;
-      background: rgba(93,155,74,.1);
-      border: 1px solid rgba(93,155,74,.2);
+      padding: .15rem .45rem;
+      border-radius: 3px;
+      background: rgba(129,182,76,.1);
+      border: 1px solid rgba(129,182,76,.2);
       color: var(--gold-dim)
     }
 
     .sbadge.green {
       background: rgba(100,200,100,.1);
       border-color: rgba(100,200,100,.2);
-      color: #7dc87d
+      color: #76c442
     }
 
     .sidebar-nav {
       display: flex;
       flex-direction: column;
-      gap: .2rem;
-      padding: .4rem .45rem
+      gap: .1rem;
+      padding: .5rem .4rem
     }
 
     .snav-item {
       display: flex;
       align-items: center;
       gap: .45rem;
-      padding: .48rem .55rem;
-      border-radius: 8px;
+      padding: .52rem .6rem;
+      border-radius: 4px;
       cursor: pointer;
       font-family: var(--fn);
-      font-size: .73rem;
+      font-size: .78rem;
       font-weight: 700;
       letter-spacing: 0;
       color: var(--text-dim);
-      transition: all .15s;
+      transition: all .1s;
       text-transform: none
     }
 
     .snav-item:hover {
-      background: rgba(93,155,74,.07);
+      background: rgba(255,255,255,.05);
       color: var(--text)
     }
 
     .snav-item.active {
-      background: rgba(93,155,74,.12);
+      background: rgba(129,182,76,.15);
       color: var(--gold)
     }
 
     .snav-icon {
-      font-size: 1rem;
+      font-size: .95rem;
       width: 20px;
       text-align: center;
       flex-shrink: 0
     }
 
     .sidebar-actions {
-      padding: .6rem .7rem;
+      padding: .65rem .7rem;
       display: flex;
       flex-direction: column;
       gap: .4rem;
@@ -752,22 +761,23 @@
       align-items: center;
       justify-content: center;
       gap: .4rem;
-      padding: .7rem;
+      padding: .65rem;
       font-family: var(--fn);
-      font-size: .75rem;
+      font-size: .78rem;
       font-weight: 700;
       letter-spacing: 0;
       text-transform: none;
       border: none;
-      border-radius: 8px;
+      border-radius: 4px;
       cursor: pointer;
       background: var(--gold);
       color: #fff;
-      transition: all .15s
+      border-bottom: 2px solid var(--gold-dim);
+      transition: all .12s
     }
 
     .sidebar-share-btn:hover {
-      background: #4e8c3e;
+      background: #8ec255;
       color: #fff
     }
 
@@ -776,22 +786,22 @@
       align-items: center;
       justify-content: center;
       gap: .4rem;
-      padding: .7rem;
+      padding: .65rem;
       font-family: var(--fn);
-      font-size: .75rem;
+      font-size: .78rem;
       font-weight: 700;
       letter-spacing: 0;
       text-transform: none;
       border: none;
-      border-radius: 8px;
+      border-radius: 4px;
       cursor: pointer;
-      background: rgba(180,50,50,.15);
-      color: #e05;
-      transition: all .15s
+      background: rgba(198, 40, 40, .15);
+      color: #ef5350;
+      transition: all .12s
     }
 
     .sidebar-resign-btn:hover {
-      background: rgba(180,50,50,.8);
+      background: rgba(198, 40, 40, .8);
       color: #fff
     }
 
@@ -803,25 +813,19 @@
       height: 100%;
       min-height: 0;
       min-width: 0;
-      padding: .4rem .5rem;
-      background: var(--bg);
-      align-items: center;
-      justify-content: center
+      padding: .55rem .65rem;
+      background: #1a1917
     }
 
     /* LEFT COLUMN: player bars + board with outside coords */
     .game-left {
-      /* Board square size = min(available height, available width) */
-      /* Vertical space: 100vh minus approx player bars + padding ~160px */
-      /* Horizontal space: 100vw minus left sidebar(150) + right panel(260) + padding ~430px */
-      --sz: min(calc(100vh - 162px), calc(100vw - 430px));
       display: flex;
       flex-direction: column;
       gap: 0;
       align-items: stretch;
-      width: calc(var(--sz) + 20px); /* +20px for rank label column */
-      min-width: 200px;
-      flex-shrink: 1;
+      flex: 1;
+      min-width: 0;
+      min-height: 0;
       overflow: hidden
     }
 
@@ -849,7 +853,6 @@
       width: 100%;
       overflow: hidden;
       align-items: stretch;
-      justify-content: center;
       padding: .2rem 0
     }
 
@@ -857,12 +860,11 @@
       display: flex;
       flex-direction: row;
       align-items: stretch;
-      width: 100%;
-      height: var(--sz);
-      flex-shrink: 0;
+      flex: 1;
       min-height: 0;
       min-width: 0;
-      justify-content: flex-start
+      width: 100%;
+      justify-content: center
     }
 
     .rank-labels {
@@ -872,15 +874,14 @@
       padding-right: 4px;
       width: 16px;
       flex-shrink: 0;
-      align-self: stretch;
-      height: 100%
+      align-self: stretch
     }
 
     .rank-label {
-      font-family: var(--fn);
-      font-size: .58rem;
+      font-family: var(--fm);
+      font-size: .6rem;
       font-weight: 700;
-      color: rgba(93, 155, 74, .7);
+      color: rgba(181, 136, 99, .85);
       text-align: right;
       line-height: 1
     }
@@ -895,10 +896,10 @@
     }
 
     .file-label {
-      font-family: var(--fn);
-      font-size: .58rem;
+      font-family: var(--fm);
+      font-size: .6rem;
       font-weight: 700;
-      color: rgba(93, 155, 74, .7);
+      color: rgba(181, 136, 99, .85);
       text-align: center;
       flex: 1
     }
@@ -906,11 +907,14 @@
     /* BOARD */
     .board-wrap {
       position: relative;
-      flex: 1;
       height: 100%;
+      width: auto;
+      aspect-ratio: 1 / 1;
+      max-height: 100%;
+      max-width: 100%;
       min-height: 0;
       min-width: 0;
-      overflow: hidden
+      flex-shrink: 1
     }
 
     .board {
@@ -921,8 +925,8 @@
       height: 100%;
       position: absolute;
       inset: 0;
-      border: 2px solid #4d6b38;
-      box-shadow: 0 0 0 1px #3a5228, 0 8px 40px rgba(0, 0, 0, .85)
+      border: 3px solid #6b3a1f;
+      box-shadow: 0 0 0 1px #4a2810, 0 12px 50px rgba(0, 0, 0, .9), inset 0 0 0 1px rgba(255,255,255,.04)
     }
 
     .sq {
@@ -937,11 +941,11 @@
     }
 
     .sq.lt {
-      background: #eeeed2;
+      background: #f0d9b5;
     }
 
     .sq.dk {
-      background: #769656;
+      background: #b58863;
     }
 
     /* Selected piece square - gold tint */
@@ -978,11 +982,11 @@
 
     /* Last move highlight */
     .sq.lf {
-      background: rgba(200, 210, 60, .52) !important
+      background: rgba(205, 210, 106, .68) !important
     }
 
     .sq.lt2 {
-      background: rgba(200, 210, 60, .65) !important
+      background: rgba(170, 162, 58, .78) !important
     }
 
     /* Check */
@@ -1038,35 +1042,34 @@
       align-items: center;
       justify-content: space-between;
       width: 100%;
-      padding: .35rem .7rem;
+      padding: .45rem .75rem;
       background: var(--surface);
       border: 1px solid var(--border);
       flex-shrink: 0;
       gap: .4rem;
-      border-radius: 6px
+      border-radius: 4px
     }
 
     .pdot {
-      width: 11px;
-      height: 11px;
+      width: 10px;
+      height: 10px;
       border-radius: 50%;
-      border: 1.5px solid rgba(255, 255, 255, .18);
-      flex-shrink: 0;
-      box-shadow: 0 0 5px currentColor
+      border: 1.5px solid rgba(255, 255, 255, .15);
+      flex-shrink: 0
     }
 
     /* Avatar circle on player bar */
     .pavatar {
-      width: 28px;
-      height: 28px;
-      border-radius: 50%;
-      background: linear-gradient(135deg, var(--surface2), #2a2e3f);
+      width: 32px;
+      height: 32px;
+      border-radius: 4px;
+      background: linear-gradient(135deg, #2e2b28, #252220);
       border: 1.5px solid var(--border);
       display: flex;
       align-items: center;
       justify-content: center;
       font-family: var(--fn);
-      font-size: .7rem;
+      font-size: .75rem;
       color: var(--gold);
       flex-shrink: 0;
       letter-spacing: 0
@@ -1074,16 +1077,16 @@
 
     .pname {
       font-family: var(--fn);
-      font-size: .82rem;
+      font-size: .88rem;
       font-weight: 700;
       letter-spacing: 0;
-      color: var(--text)
+      color: var(--text-bright)
     }
 
     .prating {
       font-family: var(--fn);
-      font-size: .62rem;
-      font-weight: 600;
+      font-size: .65rem;
+      font-weight: 400;
       color: var(--text-dim);
       margin-top: 1px
     }
@@ -1091,9 +1094,9 @@
     .pstatus {
       font-family: var(--fn);
       font-size: .65rem;
-      font-weight: 600;
+      font-weight: 700;
       color: var(--text-dim);
-      letter-spacing: 0
+      letter-spacing: .02em
     }
 
     .pstatus.on {
@@ -1101,7 +1104,7 @@
     }
 
     .pcap {
-      font-size: .85rem;
+      font-size: .9rem;
       letter-spacing: -2px;
       min-height: 16px;
       color: var(--text-dim)
@@ -1113,112 +1116,126 @@
       background: var(--surface);
       border: 1px solid var(--border);
       border-top: none;
-      padding: .38rem;
+      padding: .4rem;
       text-align: center;
       flex-shrink: 0
     }
 
     .stext {
       font-family: var(--fn);
-      font-size: .78rem;
+      font-size: .82rem;
       font-weight: 700;
-      letter-spacing: .02em;
+      letter-spacing: .01em;
       color: var(--gold)
     }
 
-    /* MOVE HISTORY — polished */
+    /* MOVE HISTORY — Chess.com style */
     .mhist {
       background: var(--surface);
       border-bottom: 1px solid var(--border);
       flex: 1;
       overflow-y: auto;
-      padding: .5rem .55rem;
+      padding: .4rem 0;
       min-height: 0
     }
 
     .mhist-title {
       font-family: var(--fn);
-      font-size: .72rem;
-      font-weight: 800;
-      letter-spacing: .02em;
-      color: var(--gold);
-      text-transform: none;
-      margin-bottom: .45rem
+      font-size: .7rem;
+      font-weight: 700;
+      letter-spacing: .08em;
+      color: var(--text-dim);
+      text-transform: uppercase;
+      margin-bottom: .3rem;
+      padding: 0 .7rem
     }
 
     .mlist {
       font-family: var(--fn);
-      font-size: .78rem;
-      font-weight: 600;
+      font-size: .82rem;
+      font-weight: 400;
       color: var(--text-dim);
       line-height: 1
     }
 
     .mpair {
       display: grid;
-      grid-template-columns: 26px 1fr 1fr;
+      grid-template-columns: 30px 1fr 1fr;
       gap: 0;
-      padding: .25rem .05rem;
-      border-radius: 3px;
+      padding: .22rem 0;
+      border-radius: 0;
       transition: background .1s
     }
 
+    .mpair:nth-child(odd) {
+      background: rgba(255,255,255,.025)
+    }
+
     .mpair:hover {
-      background: rgba(93,155,74,.04)
+      background: rgba(129,182,76,.06)
     }
 
     .mnum {
       color: var(--text-dim);
-      font-size: .65rem
+      font-size: .72rem;
+      font-weight: 400;
+      padding-left: .7rem;
+      display: flex;
+      align-items: center
     }
 
     .mw,
     .mb {
       color: var(--text);
-      padding: .05rem .35rem;
+      padding: .18rem .4rem;
       border-radius: 3px;
       cursor: pointer;
-      transition: background .12s
+      font-weight: 500;
+      transition: background .1s;
+      font-size: .82rem
     }
 
     .mw:hover,
     .mb:hover {
-      background: rgba(93, 155, 74, .14)
+      background: rgba(129, 182, 76, .14)
     }
 
     .mw.active,
     .mb.active {
-      background: rgba(93,155,74,.22);
-      color: var(--gold)
+      background: rgba(129,182,76,.25);
+      color: var(--gold);
+      font-weight: 700
     }
 
     /* CHAT */
     .chat {
-      background: var(--surface);
+      background: var(--surface2);
       border-top: 1px solid var(--border);
       display: flex;
       flex-direction: column;
-      height: 160px;
+      height: 150px;
       flex-shrink: 0
     }
 
     .chat-msgs {
       flex: 1;
       overflow-y: auto;
-      padding: .45rem .55rem;
-      font-size: .75rem;
+      padding: .5rem .65rem;
+      font-size: .78rem;
       font-family: var(--fn);
-      font-weight: 500;
-      line-height: 1.5
+      font-weight: 400;
+      line-height: 1.55
     }
 
     .cm-user {
-      color: var(--gold)
+      color: var(--gold);
+      font-weight: 700
     }
 
     .cm-sys {
       color: var(--text-dim);
-      font-style: italic
+      font-style: italic;
+      font-size: .72rem
     }
 
     .cm-txt {
@@ -1227,16 +1244,17 @@
 
     .chat-row {
       display: flex;
-      border-top: 1px solid var(--border)
+      border-top: 1px solid var(--border);
+      background: #1a1917
     }
 
     .chat-in {
       flex: 1;
       background: transparent;
       border: none;
-      padding: .35rem .5rem;
-      font-size: .75rem;
-      font-weight: 500;
+      padding: .4rem .6rem;
+      font-size: .78rem;
+      font-weight: 400;
       color: var(--text);
       font-family: var(--fn);
       margin: 0;
@@ -1248,41 +1266,48 @@
     }
 
     .chat-send {
-      background: transparent;
+      background: var(--gold);
       border: none;
-      border-left: 1px solid var(--border);
-      color: var(--gold);
-      padding: 0 .65rem;
+      color: #fff;
+      padding: 0 .9rem;
       cursor: pointer;
       font-family: var(--fn);
       font-weight: 700;
-      font-size: .72rem
+      font-size: .72rem;
+      letter-spacing: .02em;
+      border-left: 1px solid var(--gold-dim)
+    }
+
+    .chat-send:hover {
+      background: #8ec255
     }
 
     /* GAME INFO PANEL */
     .gpanel {
-      background: var(--surface);
+      background: var(--surface2);
       border: 1px solid var(--border);
       padding: .65rem .75rem;
       font-family: var(--fn);
-      font-size: .72rem;
-      font-weight: 600;
+      font-size: .75rem;
+      font-weight: 500;
       flex-shrink: 0
     }
 
     .gid {
-      font-size: .9rem;
-      font-weight: 800;
+      font-size: .92rem;
+      font-weight: 900;
       color: var(--gold);
       letter-spacing: .04em;
       word-break: break-all;
-      margin: .25rem 0
+      margin: .25rem 0;
+      font-family: var(--fm)
     }
 
     .gid-sub {
       font-size: .65rem;
       font-weight: 600;
-      color: var(--text-dim)
+      color: var(--text-dim);
+      letter-spacing: .02em
     }
 
     .grow {
@@ -1349,7 +1374,7 @@
       display: none;
       position: fixed;
       inset: 0;
-      background: rgba(0, 0, 0, .8);
+      background: rgba(0, 0, 0, .75);
       z-index: 500;
       align-items: center;
       justify-content: center
@@ -1360,18 +1385,20 @@
     }
 
     .modal {
-      background: var(--surface);
-      border: 1px solid var(--gold-dim);
+      background: #2c2b28;
+      border: 1px solid var(--border);
+      border-radius: 8px;
       padding: 2rem;
-      text-align: center
+      text-align: center;
+      box-shadow: 0 20px 60px rgba(0,0,0,.6)
     }
 
     .modal h3 {
       font-family: var(--fn);
-      font-size: .95rem;
-      font-weight: 800;
+      font-size: 1rem;
+      font-weight: 900;
       letter-spacing: .02em;
-      color: var(--gold);
+      color: var(--text-bright);
       margin-bottom: 1.4rem;
       text-transform: none
     }
@@ -1398,18 +1425,20 @@
       position: fixed;
       bottom: 1.25rem;
       right: 1.25rem;
-      background: var(--surface);
-      border: 1px solid var(--gold-dim);
-      padding: .7rem 1.1rem;
+      background: #2c2b28;
+      border: 1px solid var(--border);
+      border-left: 3px solid var(--gold);
+      padding: .75rem 1.1rem;
       font-family: var(--fn);
-      font-size: .78rem;
+      font-size: .82rem;
       font-weight: 600;
       color: var(--text);
       z-index: 999;
-      border-radius: 8px;
-      animation: slide-in .25s ease;
+      border-radius: 4px;
+      animation: slide-in .2s ease;
       max-width: 280px;
-      line-height: 1.4
+      line-height: 1.4;
+      box-shadow: 0 8px 24px rgba(0,0,0,.5)
     }
 
     @keyframes slide-in {
@@ -1427,22 +1456,22 @@
     /* REMATCH STYLES */
     .rematch-pending {
       font-family: var(--fn);
-      font-size: .72rem;
+      font-size: .75rem;
       font-weight: 600;
       letter-spacing: 0;
       color: var(--text-dim);
       text-align: center;
       margin-top: .5rem;
-      padding: .45rem;
-      background: rgba(93, 155, 74, .06);
-      border: 1px solid rgba(93, 155, 74, .15);
-      border-radius: 8px
+      padding: .5rem;
+      background: rgba(129, 182, 76, .07);
+      border: 1px solid rgba(129, 182, 76, .18);
+      border-radius: 4px
     }
 
     .rematch-request-title {
       font-family: var(--fn);
-      font-size: .78rem;
-      font-weight: 800;
+      font-size: .82rem;
+      font-weight: 900;
       letter-spacing: 0;
       color: var(--gold);
       text-transform: none
@@ -1450,34 +1479,42 @@
 
     .rematch-accept {
       flex: 1;
-      padding: .6rem;
+      padding: .65rem;
       font-family: var(--fn);
-      font-size: .75rem;
+      font-size: .82rem;
       font-weight: 700;
       letter-spacing: 0;
       background: var(--gold);
       border: none;
+      border-bottom: 2px solid var(--gold-dim);
       color: #fff;
-      border-radius: 8px;
+      border-radius: 4px;
       cursor: pointer;
       text-transform: none;
-      transition: all .15s
+      transition: all .12s
     }
+
+    .rematch-accept:hover { background: #8ec255 }
 
     .rematch-decline {
       flex: 1;
-      padding: .6rem;
+      padding: .65rem;
       font-family: var(--fn);
-      font-size: .75rem;
+      font-size: .82rem;
       font-weight: 700;
       letter-spacing: 0;
-      background: rgba(150, 40, 40, .6);
-      border: 1px solid rgba(220, 80, 80, .3);
-      color: #f88;
-      border-radius: 8px;
+      background: rgba(198, 40, 40, .5);
+      border: 1px solid rgba(220, 80, 80, .25);
+      color: #f77;
+      border-radius: 4px;
       cursor: pointer;
       text-transform: none;
-      transition: all .15s
+      transition: all .12s
+    }
+
+    .rematch-decline:hover {
+      background: rgba(198, 40, 40, .8);
+      color: #fff
     }
 
     /* CHECK HINT — highlight squares of pieces that can still move */
@@ -1514,7 +1551,7 @@
 
     /* SCROLLBARS */
     ::-webkit-scrollbar {
-      width: 3px
+      width: 4px
     }
 
     ::-webkit-scrollbar-track {
@@ -1522,6 +1559,11 @@
     }
 
     ::-webkit-scrollbar-thumb {
+      background: #4a4540;
+      border-radius: 2px
+    }
+
+    ::-webkit-scrollbar-thumb:hover {
       background: var(--gold-dim)
     }
 
@@ -1685,54 +1727,48 @@
 
     /* ═══════════════ CHESS CLOCK ═══════════════ */
     .clock {
-      font-family: var(--fn);
-      font-size: 1rem;
-      letter-spacing: .02em;
-      font-weight: 800;
-      padding: .2rem .55rem;
-      border: 1px solid var(--border);
-      border-radius: 6px;
-      min-width: 58px;
+      font-family: var(--fm);
+      font-size: 1.25rem;
+      letter-spacing: .04em;
+      font-weight: 700;
+      padding: .28rem .75rem;
+      border: none;
+      border-radius: 4px;
+      min-width: 76px;
       text-align: center;
-      transition: all .3s;
-      background: var(--surface2)
+      transition: all .25s;
+      background: #111010;
+      color: var(--text-dim)
     }
 
     .clock.active {
-      border-color: var(--gold);
-      color: var(--gold);
-      background: rgba(93, 155, 74, .08);
-      box-shadow: 0 0 10px rgba(93, 155, 74, .15)
+      background: #fff;
+      color: #1a1917;
+      box-shadow: 0 0 0 2px var(--gold)
     }
 
     .clock.low {
-      border-color: #c44;
-      color: #c44;
+      background: #fff;
+      color: #c62828;
+      box-shadow: 0 0 0 2px #c62828;
       animation: clk-pulse .5s ease-in-out infinite
     }
 
     @keyframes clk-pulse {
-
-      0%,
-      100% {
-        opacity: 1
-      }
-
-      50% {
-        opacity: .5
-      }
+      0%, 100% { opacity: 1 }
+      50%       { opacity: .55 }
     }
 
     .clock.inactive {
-      color: var(--text-dim);
-      border-color: var(--border)
+      color: #4a4745;
+      background: #111010
     }
 
     /* ═══════════════ RESULT OVERLAY ═══════════════ */
     .result-overlay {
       position: fixed;
       inset: 0;
-      background: rgba(0,0,0,.72);
+      background: rgba(0,0,0,.65);
       z-index: 800;
       display: flex;
       align-items: center;
@@ -1747,18 +1783,18 @@
 
     .result-card {
       position: relative;
-      background: #1e2229;
-      border: 1px solid rgba(255,255,255,.08);
-      border-radius: 14px;
+      background: #2c2b28;
+      border: 1px solid var(--border);
+      border-radius: 8px;
       padding: 2.2rem 2.4rem 1.8rem;
       text-align: center;
       width: min(380px, 90vw);
-      box-shadow: 0 24px 80px rgba(0,0,0,.7), 0 0 0 1px rgba(255,255,255,.05);
-      animation: result-card-in .32s cubic-bezier(.34,1.56,.64,1)
+      box-shadow: 0 24px 80px rgba(0,0,0,.8), 0 0 0 1px rgba(255,255,255,.04);
+      animation: result-card-in .3s cubic-bezier(.34,1.56,.64,1)
     }
 
     @keyframes result-card-in {
-      from { transform: scale(.82) translateY(20px); opacity: 0 }
+      from { transform: scale(.85) translateY(18px); opacity: 0 }
       to   { transform: scale(1)   translateY(0);    opacity: 1 }
     }
 
@@ -1774,7 +1810,7 @@
       line-height: 1;
       padding: .3rem .4rem;
       border-radius: 4px;
-      transition: color .15s, background .15s
+      transition: color .12s, background .12s
     }
 
     .result-close:hover {
@@ -1783,20 +1819,20 @@
     }
 
     .result-icon {
-      font-size: 3.2rem;
+      font-size: 3.4rem;
       margin-bottom: .6rem;
       line-height: 1
     }
 
     .result-title {
       font-family: var(--fn);
-      font-size: 1.55rem;
+      font-size: 1.6rem;
       font-weight: 900;
-      letter-spacing: .06em;
+      letter-spacing: .04em;
       margin-bottom: .35rem
     }
 
-    .result-title.win  { color: #5d9b4a }
+    .result-title.win  { color: #81b64c }
     .result-title.lose { color: #e05555 }
     .result-title.draw { color: #c9c04a }
 
@@ -1823,22 +1859,22 @@
 
     .result-btn-primary {
       width: 100%;
-      padding: .75rem;
+      padding: .78rem;
       font-family: var(--fn);
-      font-size: .82rem;
-      font-weight: 800;
+      font-size: .85rem;
+      font-weight: 900;
       letter-spacing: 0;
       text-transform: none;
       border: none;
-      border-radius: 8px;
+      border-radius: 4px;
+      border-bottom: 2px solid rgba(0,0,0,.25);
       cursor: pointer;
-      transition: filter .15s, transform .12s;
+      transition: filter .12s, transform .1s;
       color: #fff
     }
 
     .result-btn-primary:hover {
-      filter: brightness(1.1);
-      transform: translateY(-1px)
+      filter: brightness(1.08)
     }
 
     .result-btn-row {
@@ -1850,20 +1886,20 @@
       flex: 1;
       padding: .6rem .5rem;
       font-family: var(--fn);
-      font-size: .72rem;
+      font-size: .75rem;
       font-weight: 700;
       letter-spacing: 0;
       text-transform: none;
-      background: rgba(255,255,255,.06);
-      border: 1px solid rgba(255,255,255,.1);
-      border-radius: 8px;
+      background: rgba(255,255,255,.07);
+      border: 1px solid rgba(255,255,255,.12);
+      border-radius: 4px;
       color: var(--text-dim);
       cursor: pointer;
-      transition: all .15s
+      transition: all .12s
     }
 
     .result-btn-secondary:hover {
-      background: rgba(255,255,255,.11);
+      background: rgba(255,255,255,.12);
       color: var(--text);
       border-color: rgba(255,255,255,.2)
     }
@@ -1874,18 +1910,18 @@
       top: 4.5rem;
       left: 50%;
       transform: translateX(-50%);
-      background: rgba(220,60,60,.92);
+      background: #c62828;
       color: #fff;
       font-family: var(--fn);
-      font-size: .78rem;
-      font-weight: 800;
-      letter-spacing: .02em;
-      text-transform: none;
-      padding: .55rem 1.4rem;
-      border-radius: 8px;
+      font-size: .82rem;
+      font-weight: 900;
+      letter-spacing: .04em;
+      text-transform: uppercase;
+      padding: .5rem 1.6rem;
+      border-radius: 4px;
       z-index: 700;
-      box-shadow: 0 4px 20px rgba(220,60,60,.45);
-      animation: check-banner-in .22s ease
+      box-shadow: 0 4px 16px rgba(198, 40, 40, .5);
+      animation: check-banner-in .2s ease
     }
 
     @keyframes check-banner-in {
@@ -2075,10 +2111,10 @@
       <!-- Right: panel -->
       <div class="game-right">
         <!-- Compact info strip -->
-        <div style="background:var(--surface2);border-bottom:1px solid var(--border);padding:.55rem .8rem;display:flex;align-items:center;justify-content:space-between;flex-shrink:0;gap:.4rem">
-          <div style="display:flex;align-items:center;gap:.45rem;min-width:0">
-            <div style="font-family:var(--fn);font-size:.56rem;letter-spacing:.15em;color:var(--gold);white-space:nowrap">MOVES</div>
-            <span id="move-count" style="font-family:var(--fn);font-weight:600;font-size:.72rem;color:var(--text-dim)">0</span>
+        <div style="background:#1a1917;border-bottom:1px solid var(--border);padding:.5rem .8rem;display:flex;align-items:center;justify-content:space-between;flex-shrink:0;gap:.4rem">
+          <div style="display:flex;align-items:center;gap:.5rem;min-width:0">
+            <div style="font-family:var(--fn);font-size:.62rem;font-weight:700;letter-spacing:.1em;color:var(--text-dim);text-transform:uppercase;white-space:nowrap">Moves</div>
+            <span id="move-count" style="font-family:var(--fm);font-weight:700;font-size:.78rem;color:var(--gold)">0</span>
           </div>
           <div style="display:flex;align-items:center;gap:.35rem;flex-shrink:0">
             <span id="theme-badge" style="font-family:var(--fn);font-weight:700;font-size:.62rem;color:var(--text-dim)">Tournament</span>
@@ -2246,29 +2282,7 @@
     // ══════════════════════════════════════════════
     // UI UTILS
     // ══════════════════════════════════════════════
-    function show(s) { document.querySelectorAll('.screen').forEach(x => x.classList.remove('active')); document.getElementById('sc-' + s).classList.add('active'); if (s === 'game') requestAnimationFrame(fitBoard); }
-
-    function fitBoard() {
-      const gameLeft = document.querySelector('.game-left');
-      const gameCenter = document.querySelector('.game-center');
-      if (!gameLeft || !gameCenter) return;
-      const obar = document.querySelector('#sc-game .pbar:first-of-type');
-      const mbar = document.querySelector('#sc-game .pbar:last-of-type');
-      const sbar = document.querySelector('.status-bar');
-      const boardOuter = document.querySelector('.board-outer');
-      if (!obar || !mbar || !sbar || !boardOuter) return;
-      const availH = gameCenter.clientHeight
-        - (obar.offsetHeight + parseFloat(getComputedStyle(obar).marginBottom || 0) + 4.8)
-        - (mbar.offsetHeight + parseFloat(getComputedStyle(mbar).marginTop || 0) + 4.8)
-        - (sbar.offsetHeight + 8)
-        - 16; /* padding */
-      const availW = gameCenter.clientWidth - 20; /* rank labels */
-      const sz = Math.max(Math.min(availH, availW), 180);
-      gameLeft.style.setProperty('--sz', sz + 'px');
-      gameLeft.style.width = (sz + 20) + 'px';
-    }
-
-    window.addEventListener('resize', fitBoard);
+    function show(s) { document.querySelectorAll('.screen').forEach(x => x.classList.remove('active')); document.getElementById('sc-' + s).classList.add('active') }
 
     // ── LOBBY JOIN LOG ──────────────────────────────
     function updateLobbyJoinLog(data) {
@@ -2423,7 +2437,6 @@
         fl.innerHTML = files.map(f => `<div class="file-label">${f}</div>`).join('');
       }
       show('game');
-      requestAnimationFrame(fitBoard);
       initBoardListeners();
       if (useFirebase && db) setupChatListener();
     }
